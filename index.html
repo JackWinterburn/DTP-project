@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ada Manchester - The National College for Digital Skills | T Levels</title>
+    <style>
+        /* === ARCHITECTURE & VARIABLES === */
+        :root {
+            --ada-pink: #FF00A0;
+            --ada-purple: #7B2CBF;
+            --ada-dark: #000000;
+            --ada-grey: #121212;
+            --ada-card-bg: #1C1C1E;
+            --text-main: #F5F5F7;
+            --text-muted: #8E8E93;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--ada-dark);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { letter-spacing: -0.02em; font-weight: 700; }
+        h1 { font-size: 5.5rem; line-height: 1.05; margin-bottom: 24px; }
+        h2 { font-size: 3.8rem; line-height: 1.1; margin-bottom: 20px; }
+        p { font-size: 1.35rem; color: var(--text-muted); max-width: 850px; margin: 0 auto 24px; }
+        strong { color: var(--text-main); }
+
+        /* Structural Layouts */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Hero Layer */
+        .hero {
+            background: radial-gradient(circle at 50% 30%, #200014 0%, var(--ada-dark) 65%);
+            height: 100vh;
+        }
+        .hero-tag { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ada-pink); margin-bottom: 16px; font-weight: 600; }
+        .accent-gradient { color: var(--ada-pink); }
+
+        /* Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1.2s cubic-bezier(0.15, 0.85, 0.35, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === APPLE STICKY SCROLL SECTION === */
+        .sticky-track {
+            height: 400vh; /* 4 screens tall to allow scrolling space */
+            position: relative;
+            background-color: var(--ada-dark);
+        }
+
+        .sticky-camera {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 0 20px;
+        }
+
+        .scrub-text {
+            position: absolute;
+            opacity: 0;
+            transform: translateY(60px);
+            text-align: center;
+            width: 100%;
+            will-change: opacity, transform; /* Hardware acceleration for smooth animation */
+        }
+
+        .scrub-text h2 {
+            font-size: 4.5rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        .scrub-text p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .scrub-text .highlight {
+            color: var(--ada-pink);
+        }
+
+        /* Interactive Grid Architectures */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 60px;
+            text-align: left;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+            text-align: left;
+        }
+
+        .card {
+            background: var(--ada-card-bg);
+            padding: 48px;
+            border-radius: 28px;
+            border: 1px solid #2C2C2E;
+            transition: transform 0.4s cubic-bezier(0.15, 0.85, 0.35, 1), border-color 0.3s;
+        }
+        .card:hover { 
+            transform: translateY(-8px); 
+            border-color: var(--ada-pink);
+        }
+        .card h3 { font-size: 2.2rem; margin-bottom: 16px; color: var(--text-main); }
+        .card .stat { font-size: 4rem; color: var(--ada-pink); font-weight: 800; margin-bottom: 8px; line-height: 1; }
+        .card p { font-size: 1.15rem; color: var(--text-muted); margin: 0; }
+
+        /* Data Callout Panel */
+        .infobar {
+            background: linear-gradient(90deg, #121212 0%, #1C1C1E 100%);
+            border-left: 4px solid var(--ada-pink);
+            padding: 24px;
+            border-radius: 0 16px 16px 0;
+            text-align: left;
+            margin: 40px 0;
+        }
+        .infobar p { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+
+        /* Video Section */
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            margin: 60px auto 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #2C2C2E;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: border-color 0.4s ease;
+        }
+        .video-container:hover {
+            border-color: var(--ada-pink);
+        }
+        .video-container video, .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* FAQ Framework */
+        .faq-wrapper { width: 100%; max-width: 900px; margin-top: 60px; text-align: left; }
+        .faq-row {
+            border-bottom: 1px solid #2C2C2E;
+            padding: 28px 0;
+            cursor: pointer;
+        }
+        .faq-trigger {
+            font-size: 1.6rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-trigger span { color: var(--ada-pink); font-size: 2rem; transition: transform 0.3s; }
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.15, 0.85, 0.35, 1);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+        .faq-content p { text-align: left; margin: 20px 0 0 0; font-size: 1.15rem; }
+
+        /* External Link Tile */
+        .survey-tile {
+            display: block;
+            max-width: 700px;
+            margin: 60px auto 0;
+            background: linear-gradient(145deg, #1C1C1E, #121212);
+            border: 1px solid #2C2C2E;
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.4s cubic-bezier(0.15, 0.85, 0.35, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .survey-tile::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--ada-pink);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        .survey-tile:hover {
+            transform: translateY(-8px);
+            border-color: var(--ada-pink);
+            box-shadow: 0 15px 40px rgba(255, 0, 160, 0.15);
+        }
+        .survey-tile:hover::before {
+            transform: scaleX(1);
+        }
+        .survey-tile h3 {
+            font-size: 2.4rem;
+            color: var(--ada-pink);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .survey-tile h3 span {
+            font-size: 2.2rem;
+            transition: transform 0.3s ease;
+        }
+        .survey-tile:hover h3 span {
+            transform: translate(6px, -6px);
+        }
+        .survey-tile p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Responsive Viewports */
+        @media (max-width: 992px) {
+            h1 { font-size: 3.8rem; }
+            h2 { font-size: 2.8rem; }
+            .scrub-text h2 { font-size: 2.8rem; }
+            .scrub-text p { font-size: 1.2rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .survey-tile { padding: 40px 20px; }
+            .survey-tile h3 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP HERO SECTION -->
+    <section class="section hero">
+        <div class="container reveal">
+            <div class="hero-tag">Ada Manchester</div>
+            <h1>The Next Level.<br><span class="accent-gradient">Now Live in Ancoats.</span></h1>
+            <p>The country's top-performing digital college brings the Digital T Level to its new state-of-the-art campus at 16 Blossom Street.</p>
+        </div>
+    </section>
+
+    <!-- APPLE-STYLE STICKY SCROLL SECTION (Replacing static T Level section) -->
+    <section class="sticky-track" id="sticky-story">
+        <div class="sticky-camera">
+            
+            <!-- Sequence 1 -->
+            <div class="scrub-text" id="seq-1">
+                <h2>What is a <span class="highlight">T Level?</span></h2>
+                <p>Designed and backed directly by global tech employers, a T Level is a rigorous, two-year Level 3 qualification equivalent to three A Levels.</p>
+            </div>
+            
+            <!-- Sequence 2 -->
+            <div class="scrub-text" id="seq-2">
+                <h2>Pro-level experience.<br>Before you even <span class="highlight">graduate.</span></h2>
+            </div>
+            
+            <!-- Sequence 3 -->
+            <div class="scrub-text" id="seq-3">
+                <h2>80% Theory.<br><span class="highlight">20% Industry.</span></h2>
+                <p>Master complex software architecture in our labs, then spend a minimum of 45 days collaborating inside a real-world enterprise workspace.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- VIDEO SECTION -->
+    <section class="section" style="background: #050505;">
+        <div class="container reveal">
+            <h2>See It In Action.</h2>
+            <p>Watch how studying a Digital T Level at our Manchester campus equips you with the real-world skills employers are actively hunting for.</p>
+            
+            <div class="video-container">
+                <video width="100%" height="100%" controls controlsList="nodownload">
+                    <source src="./Ada_Ancoats_6thForm_Video_1.1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- SYSTEM MATCH / COMPARISON CARD ARCHITECTURE -->
+    <section class="section">
+        <div class="container reveal">
+            <h2>Choose Your Architecture.</h2>
+            <p>Understand the functional differences between qualifications to configure your future path correctly.</p>
+            
+            <div class="grid-2">
+                <div class="card" style="border-top: 4px solid var(--text-muted);">
+                    <h3>A Levels</h3>
+                    <p><strong>Learning Scope:</strong> Broad academic focus across three standalone subjects.</p><br>
+                    <p><strong>Structure:</strong> 100% classroom-based delivery evaluated primarily via end-of-year theoretical exams.</p><br>
+                    <p><strong>Best For:</strong> Students aiming for highly generalized academic testing or unsure which sector they wish to commit to.</p>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--ada-pink);">
+                    <h3>Ada Digital T Level</h3>
+                    <p><strong>Learning Scope:</strong> Deep, singular industry specialization in Digital Software Development.</p><br>
+                    <p><strong>Structure:</strong> 80% classroom theory paired with a structured, verified 45-day industry placement.</p><br>
+                    <p><strong>Best For:</strong> Mindsets focused entirely on the digital sector who want a proven springboard into immediate high-tier technical roles.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRESSION & BENEFIT METRICS -->
+    <section class="section" style="background: #050505;">
+        <div class="container reveal">
+            <h2>Where Can It Take You?</h2>
+            <p>A T Level at Ada Manchester unlocks three major exit parameters engineered for immediate professional impact.</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <h3>1. High-Tier Degree Apprenticeship</h3>
+                    <p>Transition seamlessly into an Ada Level 5 or Level 6 Degree Apprenticeship. Alternate between 6-7 weeks on the job and 1 week of intensive block study at Ada, securing a BSc degree while earning a competitive corporate wage with zero academic debt.</p>
+                </div>
+                <div class="card">
+                    <h3>2. Direct University Entry</h3>
+                    <p>T Levels carry comprehensive UCAS points identical to A Levels (a Distinction* equals three A*s). Nationally, 82% of all T Level applicants successfully transitioned directly into Higher Education paths.</p>
+                </div>
+                <div class="card">
+                    <h3>3. Entry-Level Employment</h3>
+                    <p>Graduate ready for roles such as Junior Software Developer, automated test engineer, or application analyst. Data gathered within the Employer <strong>"survey 2022"</strong> confirms that businesses actively target T Level graduates for their immediate workplace competency.</p>
+                </div>
+            </div>
+
+            <!-- Manchester Post-16 Fund Context Block -->
+            <div class="infobar">
+                <p><strong>Greater Manchester Strategic Infrastructure:</strong> To support this booming tech cohort, the Greater Manchester Combined Authority approved Option 6 of the Post-16 Sufficiency Fund, deploying a major £5,043,941.58 capital allocation specifically into Manchester's local system to build state-of-the-art technical teaching environments.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS PORTAL LINK -->
+    <section class="section">
+        <div class="container reveal">
+            <h2>Find Your Framework.</h2>
+            <p>Are you built for a T Level? Take the interactive skills Portal to discover the exact course pathway that matches your logic and goals.</p>
+
+            <a href="survey.html" class="survey-tile">
+                <h3>Launch the Skills Portal <span>↗</span></h3>
+                <p>Answer 10 quick questions. Find your personalized tech pathway at Ada Manchester in under 2 minutes.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- SYSTEM FAQS -->
+    <section class="section" style="background: #050505;">
+        <div class="container reveal">
+            <h2>F.A.Q</h2>
+            <p>Critical answers addressing parent and student parameters regarding safety, inclusion, and academic pathways.</p>
+            
+            <div class="faq-wrapper">
+                <div class="faq-row" onclick="handleFaqInteraction(this)">
+                    <div class="faq-trigger">Are T Levels recognized by top employers in the North West? <span>+</span></div>
+                    <div class="faq-content">
+                        <p>Yes. The qualification structure was explicitly co-developed by industry giants including ARM, BBC, and Cisco. Insights captured within the Employer <strong>"survey 2022"</strong> indicate that 90% of participating companies view T Level placements as an "extended interview process" to secure incoming talent ahead of competitors.</p>
+                    </div>
+                </div>
+                <div class="faq-row" onclick="handleFaqInteraction(this)">
+                    <div class="faq-trigger">What financial and equipment support does Ada Manchester guarantee? <span>+</span></div>
+                    <div class="faq-content">
+                        <p>We completely eliminate material barriers to entry. Every student enrolled at Ada Manchester receives a free state-of-the-art laptop for the duration of their studies and direct financial travel support to cover commuting costs to the Ancoats campus and workplace placements.</p>
+                    </div>
+                </div>
+                <div class="faq-row" onclick="handleFaqInteraction(this)">
+                    <div class="faq-trigger">Can a student with SEND or from a lower socio-economic background thrive here? <span>+</span></div>
+                    <div class="faq-content">
+                        <p>Dismantling compound disadvantage is our primary mission. While national data confirms that individuals facing overlapping socio-economic barriers are statistically three times more likely to fall out of education or work, Ada actively subverts this. 50% of our student community comes from low-income households, and we provide every learner with dedicated one-to-one coaching from active tech professionals alongside elite pastoral care systems.</p>
+                    </div>
+                </div>
+                <div class="faq-row" onclick="handleFaqInteraction(this)">
+                    <div class="faq-trigger">What are the absolute entry conditions for Ada Manchester? <span>+</span></div>
+                    <div class="faq-content">
+                        <p>Applicants require a GCSE average grade score of 5, which must explicitly include Grade 5 or above in both English and Mathematics. Eligible candidates then attend a specialized problem-solving assessment event on campus.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- === JAVASCRIPT ANIMATION === -->
+    <script>
+        // High-Performance Apple Scroll-Reveal Engine
+        const animatedNodes = document.querySelectorAll('.reveal');
+
+        const scrollObserverInstance = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.12,
+            rootMargin: "0px 0px -40px 0px"
+        });
+
+        animatedNodes.forEach(node => scrollObserverInstance.observe(node));
+
+        // === APPLE-STYLE SCROLL SCRUBBER LOGIC ===
+        window.addEventListener('scroll', () => {
+            const track = document.getElementById('sticky-story');
+            if (!track) return;
+
+            // Calculate how far we have scrolled through the sticky section
+            const rect = track.getBoundingClientRect();
+            const trackTop = rect.top;
+            
+            // Total scrollable distance
+            const scrollableDistance = rect.height - window.innerHeight; 
+            
+            // Calculate progress from 0.0 to 1.0
+            let progress = -trackTop / scrollableDistance;
+            progress = Math.max(0, Math.min(1, progress)); 
+
+            const seq1 = document.getElementById('seq-1');
+            const seq2 = document.getElementById('seq-2');
+            const seq3 = document.getElementById('seq-3');
+
+            // Run the animation math for each element
+            animateSequence(seq1, progress, 0.0, 0.33);
+            animateSequence(seq2, progress, 0.33, 0.66);
+            animateSequence(seq3, progress, 0.66, 1.0);
+        });
+
+        function animateSequence(element, globalProgress, startPhase, endPhase) {
+            if (globalProgress >= startPhase && globalProgress <= endPhase) {
+                // Calculate local progress for just this phase (0.0 to 1.0)
+                let localProgress = (globalProgress - startPhase) / (endPhase - startPhase);
+                
+                let opacity = 0;
+                let yOffset = 60; 
+
+                if (localProgress < 0.3) {
+                    opacity = localProgress / 0.3;
+                    yOffset = 60 - (opacity * 60); 
+                } 
+                else if (localProgress >= 0.3 && localProgress <= 0.7) {
+                    opacity = 1;
+                    yOffset = 0;
+                } 
+                else {
+                    opacity = 1 - ((localProgress - 0.7) / 0.3);
+                    yOffset = -((1 - opacity) * 60); 
+                }
+
+                element.style.opacity = opacity;
+                element.style.transform = `translateY(${yOffset}px)`;
+                element.style.visibility = 'visible';
+            } else {
+                element.style.opacity = 0;
+                element.style.visibility = 'hidden';
+            }
+        }
+
+        // Smooth Accordion Controller
+        function handleFaqInteraction(targetRow) {
+            const currentContentBlock = targetRow.querySelector('.faq-content');
+            const indicatorSymbol = targetRow.querySelector('.faq-trigger span');
+            
+            if (currentContentBlock.style.maxHeight) {
+                currentContentBlock.style.maxHeight = null;
+                indicatorSymbol.style.transform = "rotate(0deg)";
+                indicatorSymbol.innerText = "+";
+            } else {
+                // Collapse active components
+                document.querySelectorAll('.faq-content').forEach(block => block.style.maxHeight = null);
+                document.querySelectorAll('.faq-trigger span').forEach(symbol => {
+                    symbol.style.transform = "rotate(0deg)";
+                    symbol.innerText = "+";
+                });
+                
+                // Deploy targeted node
+                currentContentBlock.style.maxHeight = currentContentBlock.scrollHeight + "px";
+                indicatorSymbol.innerText = "-";
+            }
+        }
+    </script>
+</body>
+</html>

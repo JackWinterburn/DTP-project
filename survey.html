@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Path — Ada, the National College for Digital Skills</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ada-black: #0a0a0a;
+      --ada-dark: #111111;
+      --ada-card: #1a1a1a;
+      --ada-border: #2a2a2a;
+      --ada-green: #00e5a0;
+      --ada-green-dark: #00b880;
+      --ada-white: #ffffff;
+      --ada-grey: #888888;
+      --ada-light-grey: #cccccc;
+      --ada-warning: #ff6b35;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--ada-black);
+      color: var(--ada-white);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .app-wrap {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--ada-black);
+    }
+
+    /* ---- SCREEN TRANSITIONS ---- */
+    /* Screens are invisible/inert by default */
+    .screen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 24px;
+    }
+
+    /* Only the active screen is shown */
+    .screen.active {
+      display: block;
+      opacity: 1;
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    /* Mid-fade: still in DOM but invisible, about to be hidden */
+    .screen.fading {
+      display: block;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    /* ---- ADA LOGO ---- */
+    .ada-logo {
+      display: inline-flex;
+      align-items: center;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ada-white);
+      line-height: 1;
+    }
+
+    .ada-logo .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--ada-green);
+      border-radius: 50%;
+      margin-left: 3px;
+      flex-shrink: 0;
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+      text-decoration: none;
+      min-height: 52px;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--ada-green);
+      color: var(--ada-black);
+    }
+
+    .btn-primary:hover {
+      background: var(--ada-green-dark);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ada-white);
+      border: 2px solid var(--ada-border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--ada-green);
+      color: var(--ada-green);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ada-grey);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: underline;
+      padding: 14px 24px;
+    }
+
+    .btn-ghost:hover {
+      color: var(--ada-white);
+    }
+
+    /* ---- CARDS ---- */
+    .card {
+      background: var(--ada-card);
+      border: 1px solid var(--ada-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    /* ====================================================
+       SCREEN 1: WELCOME
+    ==================================================== */
+    #screen-welcome.active {
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+      padding-bottom: 40px;
+      min-height: 100%;
+    }
+
+    .welcome-logo-row {
+      margin-bottom: 48px;
+    }
+
+    .welcome-body {
+      flex: 1;
+    }
+
+    .welcome-headline {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.03;
+      margin-bottom: 20px;
+    }
+
+    .welcome-headline .hl-green {
+      color: var(--ada-green);
+    }
+
+    .welcome-sub {
+      font-size: 18px;
+      color: var(--ada-light-grey);
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+
+    .welcome-time {
+      font-size: 14px;
+      color: var(--ada-grey);
+      margin-bottom: 40px;
+    }
+
+    .returning-banner {
+      background: var(--ada-card);
+      border: 1px solid rgba(0, 229, 160, 0.25);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+    }
+
+    .returning-banner-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ada-green);
+      margin-bottom: 6px;
+    }
+
+    .returning-banner-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ada-white);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .btn-see-last {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: transparent;
+      border: 2px solid rgba(0, 229, 160, 0.3);
+      color: var(--ada-green);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .btn-see-last:hover {
+      border-color: var(--ada-green);
+      background: rgba(0, 229, 160, 0.06);
+    }
+
+    .welcome-cta {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ====================================================
+       SCREEN 2: QUIZ
+    ==================================================== */
+    #screen-quiz {
+      padding-top: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .quiz-sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--ada-black);
+      padding: 20px 24px 0;
+    }
+
+    .quiz-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .quiz-q-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ada-grey);
+      letter-spacing: 0.03em;
+    }
+
+    .progress-track {
+      height: 3px;
+      background: var(--ada-border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--ada-green);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .quiz-body {
+      padding: 24px 24px 40px;
+    }
+
+    .question-text {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 24px;
+    }
+
+    .options-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 18px 20px;
+      background: var(--ada-card);
+      border: 2px solid var(--ada-border);
+      border-radius: 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ada-white);
+      cursor: pointer;
+      text-align: left;
+      min-height: 60px;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: rgba(0, 229, 160, 0.5);
+      transform: translateX(3px);
+    }
+
+    .option-btn.selected {
+      border-color: var(--ada-green);
+      background: rgba(0, 229, 160, 0.07);
+      color: var(--ada-green);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-check {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--ada-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .option-btn.selected .option-check {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .option-check svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ====================================================
+       SCREEN 3: CALCULATING
+    ==================================================== */
+    #screen-calculating.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+    }
+
+    .calc-logo {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ada-white);
+      display: inline-flex;
+      align-items: center;
+      animation: calcPulse 1.4s ease-in-out infinite;
+    }
+
+    .calc-logo .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--ada-green);
+      border-radius: 50%;
+      margin-left: 4px;
+    }
+
+    @keyframes calcPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.96); }
+    }
+
+    .calc-label {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ada-grey);
+      letter-spacing: 0.01em;
+    }
+
+    /* ====================================================
+       SCREEN 4: RESULTS
+    ==================================================== */
+    #screen-results {
+      padding-bottom: 64px;
+    }
+
+    .results-logo-row {
+      margin-bottom: 24px;
+    }
+
+    .results-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ada-green);
+      margin-bottom: 8px;
+    }
+
+    .results-headline {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    /* --- Top match card --- */
+    .top-match-card {
+      background: var(--ada-card);
+      border: 2px solid var(--ada-green);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top-match-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--ada-green) 0%, rgba(0,229,160,0.1) 100%);
+    }
+
+    .top-match-meta-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .top-match-emoji {
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .top-match-pct-block {
+      text-align: right;
+    }
+
+    .top-match-pct-num {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ada-green);
+      line-height: 1;
+    }
+
+    .top-match-pct-num sup {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .top-match-pct-label {
+      font-size: 12px;
+      color: var(--ada-grey);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .top-match-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .top-match-tagline {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ada-green);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .match-bar-track {
+      height: 6px;
+      background: var(--ada-border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .match-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ada-green-dark), var(--ada-green));
+      border-radius: 3px;
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .top-match-desc {
+      font-size: 15px;
+      color: var(--ada-light-grey);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .course-detail-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .course-detail-row {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .course-detail-label {
+      color: var(--ada-grey);
+      font-weight: 700;
+      min-width: 90px;
+      flex-shrink: 0;
+    }
+
+    .course-detail-val {
+      color: var(--ada-light-grey);
+      line-height: 1.4;
+    }
+
+    .top-match-link {
+      display: block;
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 8px;
+      background: transparent;
+      border: 2px solid var(--ada-border);
+      color: var(--ada-white);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .top-match-link:hover {
+      border-color: var(--ada-green);
+      color: var(--ada-green);
+    }
+
+    /* --- Why section --- */
+    .why-section {
+      margin-bottom: 28px;
+    }
+
+    .section-heading {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
+    }
+
+    .why-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .why-item {
+      display: flex;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--ada-light-grey);
+      line-height: 1.6;
+    }
+
+    .why-arrow {
+      color: var(--ada-green);
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* --- T Level callout --- */
+    .tlevel-callout {
+      border-left: 3px solid var(--ada-green);
+      background: rgba(0, 229, 160, 0.04);
+      border-radius: 0 12px 12px 0;
+      border-top: 1px solid rgba(0, 229, 160, 0.15);
+      border-right: 1px solid rgba(0, 229, 160, 0.15);
+      border-bottom: 1px solid rgba(0, 229, 160, 0.15);
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .tlevel-toggle-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tlevel-toggle-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ada-green);
+    }
+
+    .tlevel-toggle-sub {
+      font-size: 13px;
+      color: var(--ada-grey);
+      margin-top: 2px;
+    }
+
+    .tlevel-chevron {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--ada-green);
+      transition: transform 0.25s ease;
+    }
+
+    .tlevel-chevron.open {
+      transform: rotate(180deg);
+    }
+
+    .tlevel-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .tlevel-body.open {
+      max-height: 600px;
+    }
+
+    .tlevel-inner {
+      padding: 0 20px 20px;
+    }
+
+    .tlevel-headline {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .tlevel-facts {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tlevel-facts li {
+      display: flex;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--ada-light-grey);
+      line-height: 1.55;
+    }
+
+    .tlevel-facts li::before {
+      content: '✓';
+      color: var(--ada-green);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .tlevel-stat-note {
+      font-size: 13px;
+      color: var(--ada-grey);
+      font-style: italic;
+    }
+
+    /* --- Apprenticeship note --- */
+    .apprenticeship-note {
+      display: flex;
+      gap: 10px;
+      background: var(--ada-card);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      color: var(--ada-light-grey);
+      line-height: 1.55;
+    }
+
+    .apprenticeship-note-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .apprenticeship-note-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ada-warning);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    /* --- Other courses --- */
+    .other-courses-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ada-grey);
+      margin-bottom: 12px;
+    }
+
+    .other-courses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .other-course-card {
+      background: var(--ada-card);
+      border: 1px solid var(--ada-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+
+    .other-course-card:hover {
+      border-color: rgba(0, 229, 160, 0.2);
+    }
+
+    .other-course-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .other-course-emoji {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .other-course-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .other-course-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ada-white);
+      margin-bottom: 2px;
+    }
+
+    .other-course-tagline {
+      font-size: 12px;
+      color: var(--ada-grey);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .other-course-pct-col {
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .other-course-pct-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--ada-green);
+      line-height: 1;
+      display: block;
+    }
+
+    .other-course-pct-lbl {
+      font-size: 10px;
+      color: var(--ada-grey);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .other-course-expand {
+      border-top: 1px solid var(--ada-border);
+      padding: 16px 20px;
+      display: none;
+    }
+
+    .other-course-expand.open {
+      display: block;
+    }
+
+    .other-course-desc {
+      font-size: 14px;
+      color: var(--ada-light-grey);
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+
+    .career-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .career-pill {
+      padding: 4px 12px;
+      background: var(--ada-border);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ada-light-grey);
+    }
+
+    .other-course-entry {
+      font-size: 12px;
+      color: var(--ada-grey);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .other-course-entry strong {
+      color: var(--ada-light-grey);
+    }
+
+    .other-course-more-link {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ada-green);
+      text-decoration: none;
+    }
+
+    .other-course-more-link:hover {
+      text-decoration: underline;
+    }
+
+    /* --- Results action buttons --- */
+    .results-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    /* --- Parent summary teaser card --- */
+    .parent-teaser {
+      background: #1e1e1e;
+      border: 1px solid #2f2f2f;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .parent-teaser-headline {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .parent-teaser-sub {
+      font-size: 14px;
+      color: var(--ada-grey);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    /* ====================================================
+       MODAL: SHARED
+    ==================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      z-index: 200;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 20px;
+      opacity: 1;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+      border-radius: 12px;
+    }
+
+    /* ====================================================
+       MODAL: PARENT SUMMARY
+    ==================================================== */
+    .parent-modal-box {
+      background: #ffffff;
+      color: #111111;
+      padding: 32px;
+    }
+
+    .parent-ada-logo {
+      display: inline-flex;
+      align-items: center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #111111;
+      margin-bottom: 4px;
+    }
+
+    .parent-ada-logo .dot-dark {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #00b880;
+      border-radius: 50%;
+      margin-left: 3px;
+    }
+
+    .parent-institution {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 2px;
+    }
+
+    .parent-sub-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 20px;
+    }
+
+    .parent-hr {
+      border: none;
+      border-top: 2px solid #ddd;
+      margin: 0 0 20px;
+    }
+
+    .parent-course-name {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .parent-pct {
+      font-size: 16px;
+      font-weight: 700;
+      color: #00b880;
+      margin-bottom: 14px;
+    }
+
+    .parent-desc {
+      font-size: 15px;
+      color: #333;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .parent-list-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 8px;
+    }
+
+    .parent-careers-list {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .parent-careers-list li {
+      font-size: 14px;
+      color: #333;
+      padding: 3px 0;
+    }
+
+    .parent-careers-list li::before {
+      content: '— ';
+      color: #00b880;
+      font-weight: 700;
+    }
+
+    .parent-tlevel-block {
+      border-top: 2px solid #ddd;
+      padding-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .parent-tlevel-heading {
+      font-size: 15px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 16px;
+    }
+
+    .parent-qa {
+      margin-bottom: 14px;
+    }
+
+    .parent-q {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .parent-a {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.65;
+    }
+
+    .parent-next-step {
+      border-top: 2px solid #ddd;
+      padding-top: 18px;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .parent-next-step a {
+      color: #00b880;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .parent-footer-info {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .parent-footer-info strong {
+      color: #444;
+    }
+
+    .parent-modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .parent-modal-actions .btn {
+      flex: 1;
+    }
+
+    .btn-dark-outline {
+      background: transparent;
+      color: #333;
+      border: 2px solid #ccc;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .btn-dark-outline:hover {
+      border-color: #999;
+      color: #111;
+    }
+
+    .btn-copy {
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .btn-copy:hover {
+      background: #000;
+    }
+
+    /* ====================================================
+       MODAL: EMAIL SIGNUP
+    ==================================================== */
+    .email-modal-box {
+      background: var(--ada-card);
+      border: 1px solid var(--ada-border);
+      color: var(--ada-white);
+      padding: 28px 24px;
+    }
+
+    .email-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+
+    .email-modal-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .email-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--ada-grey);
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0 0 12px;
+      font-weight: 300;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .email-modal-close:hover {
+      color: var(--ada-white);
+    }
+
+    .form-field {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ada-grey);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      display: block;
+      width: 100%;
+      background: var(--ada-dark);
+      border: 2px solid var(--ada-border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      color: var(--ada-white);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input::placeholder {
+      color: var(--ada-grey);
+    }
+
+    .form-input:focus {
+      border-color: var(--ada-green);
+    }
+
+    .form-checks-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--ada-grey);
+      margin-bottom: 10px;
+    }
+
+    .form-checks {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--ada-light-grey);
+      font-weight: 600;
+    }
+
+    .form-check input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--ada-green);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .form-success {
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .form-success-check {
+      width: 64px;
+      height: 64px;
+      background: rgba(0, 229, 160, 0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 30px;
+    }
+
+    .form-success-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .form-success-body {
+      font-size: 15px;
+      color: var(--ada-grey);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    /* ====================================================
+       TOAST
+    ==================================================== */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--ada-green);
+      color: var(--ada-black);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 22px;
+      border-radius: 8px;
+      z-index: 999;
+      white-space: nowrap;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ====================================================
+       RESPONSIVE
+    ==================================================== */
+    @media (min-width: 480px) {
+      .screen.active, .screen.fading { padding: 32px; }
+      #screen-quiz { padding-left: 0; padding-right: 0; }
+      .quiz-sticky-header { padding: 24px 32px 0; }
+      .quiz-body { padding: 24px 32px 48px; }
+      .welcome-headline { font-size: 64px; }
+    }
+
+    @media (max-width: 360px) {
+      .welcome-headline { font-size: 46px; }
+      .top-match-pct-num { font-size: 44px; }
+      .results-headline { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrap">
+
+    <!-- ================================================
+         SCREEN 1: WELCOME
+    ================================================ -->
+    <div class="screen active" id="screen-welcome">
+      <div class="welcome-logo-row">
+        <div class="ada-logo">ada<span class="dot"></span></div>
+      </div>
+
+      <div class="welcome-body">
+        <h1 class="welcome-headline">Find your<br><span class="hl-green">path.</span></h1>
+        <p class="welcome-sub">Answer 10 quick questions. We'll show you which Ada course is built for you.</p>
+        <p class="welcome-time">Takes about 2 minutes.</p>
+
+        <div id="returning-banner" style="display:none;" class="returning-banner">
+          <div class="returning-banner-label">Welcome back</div>
+          <div class="returning-banner-text" id="returning-banner-text"></div>
+          <button class="btn-see-last" onclick="App.showLastResult()">See your last result</button>
+        </div>
+
+        <div class="welcome-cta">
+          <button class="btn btn-primary" onclick="App.startQuiz()">Let's go &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SCREEN 2: QUIZ
+    ================================================ -->
+    <div class="screen" id="screen-quiz">
+      <div class="quiz-sticky-header">
+        <div class="quiz-top-row">
+          <div class="ada-logo" style="font-size:18px;">ada<span class="dot" style="width:5px;height:5px;"></span></div>
+          <div class="quiz-q-count" id="quiz-q-count">1 of 10</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <div class="quiz-body">
+        <h2 class="question-text" id="question-text"></h2>
+        <ul class="options-list" id="options-list"></ul>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SCREEN 3: CALCULATING
+    ================================================ -->
+    <div class="screen" id="screen-calculating">
+      <div class="calc-logo">ada<span class="dot"></span></div>
+      <div class="calc-label">Calculating your path...</div>
+    </div>
+
+    <!-- ================================================
+         SCREEN 4: RESULTS
+    ================================================ -->
+    <div class="screen" id="screen-results">
+      <!-- filled dynamically -->
+    </div>
+
+  </div><!-- /.app-wrap -->
+
+  <!-- ================================================
+       MODAL: PARENT SUMMARY
+  ================================================ -->
+  <div class="modal-overlay hidden" id="modal-parent" onclick="App.handleParentModalBgClick(event)">
+    <div class="modal-box parent-modal-box" id="modal-parent-box">
+      <!-- filled dynamically -->
+    </div>
+  </div>
+
+  <!-- ================================================
+       MODAL: EMAIL SIGNUP
+  ================================================ -->
+  <div class="modal-overlay hidden" id="modal-email" onclick="App.handleEmailModalBgClick(event)">
+    <div class="modal-box email-modal-box" id="modal-email-box">
+      <div class="email-modal-header">
+        <div class="email-modal-title">Stay in the loop.</div>
+        <button class="email-modal-close" onclick="App.closeEmailModal()" aria-label="Close">&times;</button>
+      </div>
+      <div id="email-form-inner">
+        <!-- filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ================================================
+    // DATA
+    // ================================================
+
+    var questions = [
+      {
+        id: 1,
+        text: "When you're given a problem to solve, what's your instinct?",
+        options: [
+          { text: "Break it down with logic and data", traits: { pioneer: 3, innovator: 1 } },
+          { text: "Think about who's affected and why", traits: { innovator: 3, creator: 1 } },
+          { text: "Sketch out what it could look like", traits: { creator: 3, developer: 1 } },
+          { text: "Just start building and figure it out", traits: { developer: 3, foundation: 1 } }
+        ]
+      },
+      {
+        id: 2,
+        text: "Which of these sounds most like you?",
+        options: [
+          { text: "I love maths and I'm good at it", traits: { pioneer: 3 } },
+          { text: "I'm into how businesses and people work", traits: { innovator: 3 } },
+          { text: "I'm a visual person — design gets me", traits: { creator: 3 } },
+          { text: "I want to write code and ship real things", traits: { developer: 3, apprenticeship: 1 } }
+        ]
+      },
+      {
+        id: 3,
+        text: "What kind of career excites you most?",
+        options: [
+          { text: "AI researcher, data scientist, or engineer", traits: { pioneer: 3, developer: 1 } },
+          { text: "Product manager, UX researcher, or tech consultant", traits: { innovator: 3 } },
+          { text: "UX designer, game designer, or creative technologist", traits: { creator: 3 } },
+          { text: "Software developer, web engineer, or cybersecurity", traits: { developer: 3, apprenticeship: 2 } }
+        ]
+      },
+      {
+        id: 4,
+        text: "How do you feel about doing a 45-day work placement as part of your course?",
+        options: [
+          { text: "Yes — real-world experience is everything", traits: { developer: 3, apprenticeship: 3 } },
+          { text: "Sounds good, but I want classroom learning too", traits: { innovator: 2, creator: 2 } },
+          { text: "I'd prefer to focus on exams and grades", traits: { pioneer: 3 } },
+          { text: "I'm not sure yet — I need more confidence first", traits: { foundation: 3 } }
+        ]
+      },
+      {
+        id: 5,
+        text: "What's your honest relationship with coding right now?",
+        options: [
+          { text: "I've been coding for years — it's my thing", traits: { pioneer: 2, developer: 3, apprenticeship: 2 } },
+          { text: "I can do it but it's not my main passion", traits: { innovator: 2, creator: 2 } },
+          { text: "I'm a beginner but I really want to learn", traits: { foundation: 3, developer: 1 } },
+          { text: "I'm somewhere in the middle", traits: { creator: 1, innovator: 1, developer: 1 } }
+        ]
+      },
+      {
+        id: 6,
+        text: "Would you rather earn money while you study or focus full-time on learning?",
+        options: [
+          { text: "Earn while I learn — 100%", traits: { apprenticeship: 4 } },
+          { text: "Full-time study, then a job", traits: { pioneer: 2, innovator: 2, creator: 2, developer: 2 } },
+          { text: "Either works for me", traits: { developer: 1, apprenticeship: 1 } }
+        ]
+      },
+      {
+        id: 7,
+        text: "Which project sounds most exciting to you?",
+        options: [
+          { text: "Building a machine learning model to predict something", traits: { pioneer: 3 } },
+          { text: "Designing an app that helps a business solve a real problem", traits: { innovator: 3 } },
+          { text: "Creating an interactive game or visual experience", traits: { creator: 3 } },
+          { text: "Building and launching a working web application", traits: { developer: 3, apprenticeship: 2 } }
+        ]
+      },
+      {
+        id: 8,
+        text: "How important is going to university after sixth form?",
+        options: [
+          { text: "Very — I want to go to a top university", traits: { pioneer: 3, innovator: 1 } },
+          { text: "I'm open to it but not set on it", traits: { creator: 2, developer: 2 } },
+          { text: "I'd rather go straight into a career or degree apprenticeship", traits: { apprenticeship: 3, developer: 2 } },
+          { text: "I haven't decided yet", traits: { foundation: 2, innovator: 1 } }
+        ]
+      },
+      {
+        id: 9,
+        text: "Pick the phrase that sounds most like you:",
+        options: [
+          { text: "\u201cI want to understand how things work at a deep level\u201d", traits: { pioneer: 3 } },
+          { text: "\u201cI want to understand people and make tech work for them\u201d", traits: { innovator: 3 } },
+          { text: "\u201cI want to make things look and feel amazing\u201d", traits: { creator: 3 } },
+          { text: "\u201cI want to build things people actually use\u201d", traits: { developer: 3, apprenticeship: 1 } }
+        ]
+      },
+      {
+        id: 10,
+        text: "Which subject do you enjoy most right now?",
+        options: [
+          { text: "Maths or Further Maths", traits: { pioneer: 3 } },
+          { text: "Business Studies or Psychology", traits: { innovator: 3 } },
+          { text: "Art, Design, or Media", traits: { creator: 3 } },
+          { text: "Computer Science or ICT", traits: { developer: 2, apprenticeship: 1, pioneer: 1 } },
+          { text: "None of these feel like me yet", traits: { foundation: 3 } }
+        ]
+      }
+    ];
+
+    var courses = {
+      pioneer: {
+        name: "Pioneer Pathway",
+        campus: "London",
+        badge: "\uD83D\uDD2D",
+        tagline: "Maths + Computer Science + AI",
+        description: "For the deeply curious. Combines A-Level Computer Science with A-Level Maths (and Further Maths if you want it). Built for students who want to go deep into algorithms, data science, and emerging technologies like AI.",
+        careers: ["AI Researcher", "Data Scientist", "Software Engineer", "Quantitative Analyst"],
+        qualification: "A-Level Maths + A-Level Computer Science",
+        equivalent: "2 A-Levels",
+        entryRequirement: "Grade 6+ in Maths and Computer Science GCSE",
+        url: "https://www.ada.ac.uk/sixth-form/london-curriculum/pioneer-pathway/",
+        isTLevel: false
+      },
+      innovator: {
+        name: "Innovator Pathway",
+        campus: "London",
+        badge: "\uD83D\uDCA1",
+        tagline: "Computer Science + Business or Psychology",
+        description: "For students who want to understand people as much as technology. Combines Computer Science with Business Studies or Psychology — perfect if you see yourself shaping how tech is used, not just built.",
+        careers: ["Product Manager", "UX Researcher", "Tech Consultant", "Digital Strategist"],
+        qualification: "A-Level Computer Science + A-Level Business or Psychology",
+        equivalent: "2 A-Levels",
+        entryRequirement: "Grade 5+ across 5 GCSEs including English and Maths",
+        url: "https://www.ada.ac.uk/sixth-form/london-curriculum/innovator-pathway-2/",
+        isTLevel: false
+      },
+      creator: {
+        name: "Creator Pathway",
+        campus: "London",
+        badge: "\uD83C\uDFA8",
+        tagline: "Computer Science + Graphics",
+        description: "For the creative technologist. Mixes Computer Science with A-Level Graphics — so you build digital products that work AND look extraordinary. UX, game design, interactive experiences.",
+        careers: ["UX Designer", "Game Designer", "Creative Technologist", "Front-end Developer"],
+        qualification: "A-Level Computer Science + A-Level Graphics",
+        equivalent: "2 A-Levels",
+        entryRequirement: "Grade 5+ across 5 GCSEs including English and Maths",
+        url: "https://www.ada.ac.uk/sixth-form/london-curriculum/creator-pathway/",
+        isTLevel: false
+      },
+      developer: {
+        name: "Developer Pathway \u2014 T Level",
+        campus: "London & Manchester",
+        badge: "\u26A1",
+        tagline: "Digital Production, Design & Development",
+        description: "The most industry-connected qualification Ada offers. A 2-year T Level equivalent to 3 A-Levels — including a 45-day paid work placement with a real tech company. You graduate with employer contacts, real experience, and up to 168 UCAS points.",
+        careers: ["Software Developer", "Web Engineer", "Cybersecurity Analyst", "Database Developer"],
+        qualification: "T Level in Digital Production, Design & Development",
+        equivalent: "3 A-Levels (up to 168 UCAS points)",
+        entryRequirement: "Grade 5+ in English & Maths, Grade 6+ in Computer Science GCSE",
+        url: "https://www.ada.ac.uk/sixth-form/manchester-curriculum/",
+        isTLevel: true,
+        tLevelFacts: [
+          "Worth up to 168 UCAS points — accepted by most UK universities",
+          "Includes a mandatory 45-day industry work placement",
+          "Partners include Bank of America, Booking.com, PwC and Siemens",
+          "Equivalent to 3 A-Levels — not a lesser qualification",
+          "Leads directly to degree apprenticeships or university"
+        ]
+      },
+      apprenticeship: {
+        name: "Degree Apprenticeship",
+        campus: "London & Manchester",
+        badge: "\uD83D\uDCBC",
+        tagline: "Earn while you learn \u2014 BSc Digital Technology Solutions",
+        description: "Skip the tuition fees. Earn a full BSc while working for a top tech employer. Ada's degree apprenticeship programme pays you a salary from day one, with training built around what employers actually need.",
+        careers: ["Software Engineer", "Solutions Architect", "DevOps Engineer", "Technical Lead"],
+        qualification: "BSc Digital Technology Solutions (Degree Apprenticeship)",
+        equivalent: "Full undergraduate degree",
+        entryRequirement: "Typically post-18, after completing sixth form. Apply after your T Level or A-Levels.",
+        url: "https://www.ada.ac.uk/apprentices/",
+        isTLevel: false,
+        note: "This is a post-18 pathway. Complete your sixth form first, then apply."
+      },
+      foundation: {
+        name: "Foundation Year",
+        campus: "London",
+        badge: "\uD83C\uDF31",
+        tagline: "Digital & Creative \u2014 build your confidence first",
+        description: "Not sure if you're ready for Level 3 yet? The Foundation Year is designed exactly for that. Build the technical and creative skills you need, then progress into one of Ada's specialist pathways with confidence.",
+        careers: ["Stepping stone to all Ada pathways"],
+        qualification: "Foundation Year (Digital & Creative Pathway)",
+        equivalent: "Level 2 \u2014 progresses to Level 3",
+        entryRequirement: "Open to students who don't yet meet Level 3 entry requirements",
+        url: "https://www.ada.ac.uk/london-curriculum-2/foundation-year/",
+        isTLevel: false
+      }
+    };
+
+    // ================================================
+    // STATE
+    // ================================================
+
+    var state = {
+      currentQ: 0,
+      answers: [],
+      scores: {},
+      topMatch: null,
+      sortedCourses: [],
+      answering: false
+    };
+
+    // ================================================
+    // UTILS
+    // ================================================
+
+    function qs(sel) { return document.querySelector(sel); }
+    function qsa(sel) { return document.querySelectorAll(sel); }
+    function el(tag, cls, html) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (html !== undefined) e.innerHTML = html;
+      return e;
+    }
+
+    function showScreen(id) {
+      qsa('.screen').forEach(function(s) {
+        if (s.id === id) {
+          s.classList.add('active');
+          s.classList.remove('fading');
+          s.scrollTop = 0;
+        } else {
+          s.classList.remove('active');
+          s.classList.remove('fading');
+        }
+      });
+    }
+
+    function fadeToScreen(id) {
+      var current = qs('.screen.active');
+      if (current && current.id !== id) {
+        current.classList.add('fading');
+        setTimeout(function() {
+          current.classList.remove('active');
+          current.classList.remove('fading');
+          showScreen(id);
+        }, 260);
+      } else {
+        showScreen(id);
+      }
+    }
+
+    function openModal(id) {
+      qs('#' + id).classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      qs('#' + id).classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    var toastTimer = null;
+    function showToast(msg) {
+      var t = qs('#toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2800);
+    }
+
+    function animateCount(el, target, durationMs, suffix) {
+      suffix = suffix || '';
+      var start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var progress = Math.min((ts - start) / durationMs, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // ================================================
+    // SCORING
+    // ================================================
+
+    function computeScores() {
+      var raw = {};
+      Object.keys(courses).forEach(function(k) { raw[k] = 0; });
+      state.answers.forEach(function(ans) {
+        Object.keys(ans.traits).forEach(function(trait) {
+          if (raw[trait] !== undefined) raw[trait] += ans.traits[trait];
+        });
+      });
+      state.scores = raw;
+
+      var keys = Object.keys(raw);
+      var maxRaw = 0;
+      keys.forEach(function(k) { if (raw[k] > maxRaw) maxRaw = raw[k]; });
+
+      var normalised = {};
+      keys.forEach(function(k) {
+        if (maxRaw === 0) {
+          normalised[k] = 35;
+        } else {
+          var scaled = (raw[k] / maxRaw) * 95;
+          normalised[k] = Math.max(Math.round(scaled), 35);
+        }
+      });
+
+      var sorted = keys.slice().sort(function(a, b) { return normalised[b] - normalised[a]; });
+      state.topMatch = sorted[0];
+      state.sortedCourses = sorted.map(function(k) { return { key: k, pct: normalised[k] }; });
+    }
+
+    function saveResult() {
+      localStorage.setItem('ada_quiz_result', JSON.stringify({
+        timestamp: Date.now(),
+        answers: state.answers,
+        scores: state.scores,
+        topMatch: state.topMatch,
+        sortedCourses: state.sortedCourses
+      }));
+    }
+
+    // ================================================
+    // WELCOME SCREEN
+    // ================================================
+
+    function initWelcome() {
+      var saved = localStorage.getItem('ada_quiz_result');
+      if (!saved) return;
+      try {
+        var result = JSON.parse(saved);
+        var age = Date.now() - result.timestamp;
+        if (age > 30 * 24 * 60 * 60 * 1000) return;
+        var course = courses[result.topMatch];
+        if (!course) return;
+        var banner = qs('#returning-banner');
+        var bannerText = qs('#returning-banner-text');
+        bannerText.textContent = 'You matched with ' + course.name + ' last time. Retake or see your result?';
+        banner.style.display = 'block';
+      } catch (e) {}
+    }
+
+    // ================================================
+    // QUIZ
+    // ================================================
+
+    function renderQuestion() {
+      var q = questions[state.currentQ];
+      var total = questions.length;
+      var pctDone = (state.currentQ / total) * 100;
+
+      qs('#progress-fill').style.width = pctDone + '%';
+      qs('#quiz-q-count').textContent = (state.currentQ + 1) + ' of ' + total;
+
+      var questionEl = qs('#question-text');
+      questionEl.style.opacity = '0';
+      questionEl.textContent = q.text;
+
+      var listEl = qs('#options-list');
+      listEl.innerHTML = '';
+
+      q.options.forEach(function(opt, i) {
+        var li = document.createElement('li');
+        var btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.setAttribute('data-index', i);
+
+        var textSpan = document.createElement('span');
+        textSpan.textContent = opt.text;
+        textSpan.style.flex = '1';
+
+        var checkSpan = document.createElement('span');
+        checkSpan.className = 'option-check';
+        checkSpan.innerHTML = '<svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 7.2L5.3 10.5L12 3.5" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+        btn.appendChild(textSpan);
+        btn.appendChild(checkSpan);
+
+        btn.addEventListener('click', function() {
+          if (state.answering) return;
+          handleAnswer(i, q, btn, listEl);
+        });
+
+        li.appendChild(btn);
+        listEl.appendChild(li);
+      });
+
+      requestAnimationFrame(function() {
+        questionEl.style.transition = 'opacity 0.25s ease';
+        questionEl.style.opacity = '1';
+      });
+
+      state.answering = false;
+    }
+
+    function handleAnswer(optionIndex, q, btnEl, listEl) {
+      state.answering = true;
+
+      var opt = q.options[optionIndex];
+      btnEl.classList.add('selected');
+
+      // Disable all buttons
+      listEl.querySelectorAll('.option-btn').forEach(function(b) {
+        b.disabled = true;
+      });
+
+      state.answers.push({ questionId: q.id, optionIndex: optionIndex, traits: opt.traits });
+
+      setTimeout(function() {
+        state.currentQ++;
+        if (state.currentQ >= questions.length) {
+          finishQuiz();
+        } else {
+          renderQuestion();
+        }
+      }, 420);
+    }
+
+    function finishQuiz() {
+      fadeToScreen('screen-calculating');
+      setTimeout(function() {
+        computeScores();
+        saveResult();
+        renderResults();
+        fadeToScreen('screen-results');
+      }, 1550);
+    }
+
+    // ================================================
+    // WHY REASONS
+    // ================================================
+
+    var reasonMap = {
+      pioneer: [
+        { qId: 1, oi: 0, text: "You approach problems with logic and data — Pioneer is built for analytical minds." },
+        { qId: 2, oi: 0, text: "You said maths is your thing — Pioneer puts it front and centre." },
+        { qId: 3, oi: 0, text: "You're drawn to AI and data science — Pioneer takes you there." },
+        { qId: 4, oi: 2, text: "You'd rather focus on exams and grades — Pioneer has A-Level rigour built in." },
+        { qId: 7, oi: 0, text: "Machine learning and prediction models excite you — that's Pioneer territory." },
+        { qId: 8, oi: 0, text: "You want to go to a top university — Pioneer is a strong pathway for that." },
+        { qId: 9, oi: 0, text: "You want to understand how things work at a deep level — exactly what Pioneer delivers." },
+        { qId: 10, oi: 0, text: "Maths is your strongest subject — and Pioneer is built around it." }
+      ],
+      innovator: [
+        { qId: 1, oi: 1, text: "You think about who's affected — Innovator puts humans at the centre of tech." },
+        { qId: 2, oi: 1, text: "You're into business and people — Innovator combines both with Computer Science." },
+        { qId: 3, oi: 1, text: "Product management and UX research excite you — classic Innovator territory." },
+        { qId: 9, oi: 1, text: "You want to make tech work for people — that's exactly Innovator's focus." },
+        { qId: 10, oi: 1, text: "Business Studies or Psychology is your subject — Innovator builds on that." }
+      ],
+      creator: [
+        { qId: 1, oi: 2, text: "You instinctively sketch things out — Creator is for visual thinkers." },
+        { qId: 2, oi: 2, text: "Design is your thing — Creator combines it with the technical skills to actually build." },
+        { qId: 3, oi: 2, text: "UX, game design, creative tech — that's Creator's world." },
+        { qId: 7, oi: 2, text: "You want to build games and interactive experiences — Creator is the path." },
+        { qId: 9, oi: 2, text: "You want things to look and feel amazing — Creator blends art with code." },
+        { qId: 10, oi: 2, text: "Art and design are your strengths — Creator builds directly on that." }
+      ],
+      developer: [
+        { qId: 1, oi: 3, text: "You learn by doing — Developer puts you in front of real projects from day one." },
+        { qId: 2, oi: 3, text: "You want to write code and ship real things — Developer is exactly that." },
+        { qId: 4, oi: 0, text: "You want real-world experience — Developer includes a 45-day paid placement." },
+        { qId: 5, oi: 0, text: "You've been coding for years — Developer is where experienced builders belong." },
+        { qId: 7, oi: 3, text: "Launching working web apps excites you — Developer makes that happen." },
+        { qId: 9, oi: 3, text: "You want to build things people actually use — that's Developer in a sentence." }
+      ],
+      apprenticeship: [
+        { qId: 6, oi: 0, text: "You want to earn while you learn — Degree Apprenticeship pays you from day one." },
+        { qId: 8, oi: 2, text: "You'd rather work than wait — Degree Apprenticeship skips the student debt entirely." },
+        { qId: 4, oi: 0, text: "Real-world experience is everything to you — and this is as real as it gets." },
+        { qId: 5, oi: 0, text: "You've already been coding — you're ready to work at a real tech company." }
+      ],
+      foundation: [
+        { qId: 4, oi: 3, text: "You said you need more confidence first — Foundation Year is designed exactly for that." },
+        { qId: 5, oi: 2, text: "You're at the start of your coding journey — Foundation Year meets you where you are." },
+        { qId: 10, oi: 4, text: "No subject feels quite right yet — Foundation Year helps you figure out your direction." }
+      ]
+    };
+
+    var genericReasons = {
+      pioneer: [
+        "Your answers show a clear preference for deep, analytical thinking.",
+        "You're drawn to maths, algorithms, and understanding systems.",
+        "Pioneer suits students aiming for top universities in computer science or engineering."
+      ],
+      innovator: [
+        "Your answers show equal interest in technology and how people use it.",
+        "You think about impact — Innovator is for builders who consider the human side.",
+        "You'd thrive in roles bridging business strategy and technology."
+      ],
+      creator: [
+        "Your answers show a strong visual and creative instinct.",
+        "You want to make things that look as good as they work.",
+        "Creator is one of the only qualifications in the country combining CS with A-Level Graphics."
+      ],
+      developer: [
+        "Your answers show you want hands-on, practical experience.",
+        "You're drawn to building real things — T Level puts you inside real companies.",
+        "Developer is Ada's most industry-connected sixth form programme."
+      ],
+      apprenticeship: [
+        "Your answers show you're ready to hit the ground running.",
+        "You want real experience and real earnings — simultaneously.",
+        "Degree Apprenticeship gives you a full BSc and a salary. No student debt."
+      ],
+      foundation: [
+        "Your answers suggest you want to build confidence before committing to a specialism.",
+        "Foundation Year is a serious, accredited qualification — not a fallback.",
+        "You'll progress into a specialist pathway at Ada once you're ready."
+      ]
+    };
+
+    function getWhyReasons(topKey) {
+      var reasons = [];
+      var maps = reasonMap[topKey] || [];
+      maps.forEach(function(m) {
+        if (reasons.length >= 3) return;
+        var ans = state.answers.find(function(a) { return a.questionId === m.qId && a.optionIndex === m.oi; });
+        if (ans) reasons.push(m.text);
+      });
+      var generics = genericReasons[topKey] || [];
+      var gi = 0;
+      while (reasons.length < 3 && gi < generics.length) {
+        if (reasons.indexOf(generics[gi]) === -1) reasons.push(generics[gi]);
+        gi++;
+      }
+      return reasons.slice(0, 3);
+    }
+
+    // ================================================
+    // RENDER RESULTS
+    // ================================================
+
+    function renderResults() {
+      var topKey = state.topMatch;
+      var topCourse = courses[topKey];
+      var topPct = state.sortedCourses[0].pct;
+      var otherCourses = state.sortedCourses.slice(1);
+      var reasons = getWhyReasons(topKey);
+
+      var container = qs('#screen-results');
+      container.innerHTML = '';
+
+      // Logo row
+      var logoRow = el('div', 'results-logo-row');
+      logoRow.innerHTML = '<div class="ada-logo">ada<span class="dot"></span></div>';
+      container.appendChild(logoRow);
+
+      // Eyebrow + headline
+      container.appendChild(el('div', 'results-eyebrow', 'Your result'));
+      container.appendChild(el('h1', 'results-headline', 'You\u2019ve found<br>your path.'));
+
+      // TOP MATCH CARD
+      var topCard = el('div', 'top-match-card');
+
+      var metaRow = el('div', 'top-match-meta-row');
+      metaRow.innerHTML =
+        '<div class="top-match-emoji">' + topCourse.badge + '</div>' +
+        '<div class="top-match-pct-block">' +
+          '<div class="top-match-pct-num"><span id="pct-top">0</span><sup>%</sup></div>' +
+          '<div class="top-match-pct-label">match</div>' +
+        '</div>';
+      topCard.appendChild(metaRow);
+
+      topCard.appendChild(el('div', 'top-match-name', escapeHtml(topCourse.name)));
+      topCard.appendChild(el('div', 'top-match-tagline', escapeHtml(topCourse.tagline)));
+
+      var barTrack = el('div', 'match-bar-track');
+      barTrack.innerHTML = '<div class="match-bar-fill" id="top-bar-fill"></div>';
+      topCard.appendChild(barTrack);
+
+      topCard.appendChild(el('div', 'top-match-desc', escapeHtml(topCourse.description)));
+
+      var grid = el('div', 'course-detail-grid');
+      grid.innerHTML =
+        detailRow('Qualification', topCourse.qualification) +
+        detailRow('Equivalent', topCourse.equivalent) +
+        detailRow('Campus', topCourse.campus) +
+        detailRow('Entry', topCourse.entryRequirement);
+      topCard.appendChild(grid);
+
+      var moreLink = el('a', 'top-match-link', 'Learn more about this pathway \u2192');
+      moreLink.href = topCourse.url;
+      moreLink.target = '_blank';
+      moreLink.rel = 'noopener noreferrer';
+      topCard.appendChild(moreLink);
+
+      container.appendChild(topCard);
+
+      // WHY SECTION
+      var whySec = el('div', 'why-section');
+      whySec.appendChild(el('div', 'section-heading', 'Why this suits you'));
+      var whyList = el('ul', 'why-list');
+      reasons.forEach(function(r) {
+        var li = el('li', 'why-item');
+        li.innerHTML = '<span class="why-arrow">&rarr;</span><span>' + escapeHtml(r) + '</span>';
+        whyList.appendChild(li);
+      });
+      whySec.appendChild(whyList);
+      container.appendChild(whySec);
+
+      // T LEVEL CALLOUT
+      if (topCourse.isTLevel) {
+        var tlCallout = el('div', 'tlevel-callout');
+        var tlBtn = el('button', 'tlevel-toggle-btn');
+        tlBtn.setAttribute('aria-expanded', 'false');
+        tlBtn.innerHTML =
+          '<div>' +
+            '<div class="tlevel-toggle-label">What is a T Level?</div>' +
+            '<div class="tlevel-toggle-sub">Tap to find out \u2014 it\u2019s not what you might think</div>' +
+          '</div>' +
+          '<svg class="tlevel-chevron" id="tlevel-chev" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            '<path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>';
+        tlBtn.addEventListener('click', function() {
+          var body = qs('#tlevel-body');
+          var chev = qs('#tlevel-chev');
+          var open = body.classList.toggle('open');
+          chev.classList.toggle('open', open);
+          tlBtn.setAttribute('aria-expanded', open);
+        });
+        tlCallout.appendChild(tlBtn);
+
+        var tlBody = el('div', 'tlevel-body');
+        tlBody.id = 'tlevel-body';
+        var tlInner = el('div', 'tlevel-inner');
+        tlInner.appendChild(el('div', 'tlevel-headline', 'A T Level isn\u2019t a compromise. It\u2019s a head start.'));
+        var factsList = el('ul', 'tlevel-facts');
+        topCourse.tLevelFacts.forEach(function(f) {
+          factsList.appendChild(el('li', null, escapeHtml(f)));
+        });
+        tlInner.appendChild(factsList);
+        tlInner.appendChild(el('div', 'tlevel-stat-note', '84% of Ada sixth form students secure their first choice destination.'));
+        tlBody.appendChild(tlInner);
+        tlCallout.appendChild(tlBody);
+        container.appendChild(tlCallout);
+      }
+
+      // APPRENTICESHIP NOTE
+      if (topCourse.note) {
+        var noteEl = el('div', 'apprenticeship-note');
+        noteEl.innerHTML =
+          '<div class="apprenticeship-note-icon">\uD83D\uDCCB</div>' +
+          '<div><div class="apprenticeship-note-label">Note</div>' + escapeHtml(topCourse.note) + '</div>';
+        container.appendChild(noteEl);
+      }
+
+      // OTHER COURSES
+      container.appendChild(el('div', 'other-courses-heading', 'Other courses that could suit you'));
+      var otherList = el('div', 'other-courses-list');
+      otherCourses.forEach(function(item, i) {
+        var c = courses[item.key];
+        var card = el('div', 'other-course-card');
+
+        var headerBtn = el('button', 'other-course-btn');
+        headerBtn.setAttribute('aria-expanded', 'false');
+        headerBtn.innerHTML =
+          '<div class="other-course-emoji">' + c.badge + '</div>' +
+          '<div class="other-course-text">' +
+            '<div class="other-course-name">' + escapeHtml(c.name) + '</div>' +
+            '<div class="other-course-tagline">' + escapeHtml(c.tagline) + '</div>' +
+          '</div>' +
+          '<div class="other-course-pct-col">' +
+            '<span class="other-course-pct-num" id="pct-other-' + i + '">0%</span>' +
+            '<span class="other-course-pct-lbl">match</span>' +
+          '</div>';
+
+        var expandBody = el('div', 'other-course-expand');
+        expandBody.id = 'other-expand-' + i;
+        expandBody.innerHTML =
+          '<div class="other-course-desc">' + escapeHtml(c.description) + '</div>' +
+          '<div class="career-pills">' + c.careers.map(function(career) {
+            return '<span class="career-pill">' + escapeHtml(career) + '</span>';
+          }).join('') + '</div>' +
+          '<div class="other-course-entry"><strong>Entry:</strong> ' + escapeHtml(c.entryRequirement) + '</div>' +
+          '<a href="' + c.url + '" target="_blank" rel="noopener noreferrer" class="other-course-more-link">Find out more \u2192</a>';
+
+        headerBtn.addEventListener('click', function() {
+          var open = expandBody.classList.toggle('open');
+          headerBtn.setAttribute('aria-expanded', open);
+        });
+
+        card.appendChild(headerBtn);
+        card.appendChild(expandBody);
+        otherList.appendChild(card);
+      });
+      container.appendChild(otherList);
+
+      // ACTION BUTTONS
+      var actions = el('div', 'results-actions');
+
+      var openDayBtn = el('a', 'btn btn-primary', 'Book an open day \u2192');
+      openDayBtn.href = 'https://www.ada.ac.uk/sixth-form/open-days-events/';
+      openDayBtn.target = '_blank';
+      openDayBtn.rel = 'noopener noreferrer';
+      actions.appendChild(openDayBtn);
+
+      var emailBtn = el('button', 'btn btn-secondary', 'Get on the mailing list');
+      emailBtn.addEventListener('click', function() { App.openEmailModal(); });
+      actions.appendChild(emailBtn);
+
+      var retakeBtn = el('button', 'btn btn-ghost', 'Retake the quiz');
+      retakeBtn.addEventListener('click', function() { App.retake(); });
+      actions.appendChild(retakeBtn);
+
+      container.appendChild(actions);
+
+      // PARENT TEASER
+      var parentTeaser = el('div', 'parent-teaser');
+      parentTeaser.innerHTML =
+        '<div class="parent-teaser-headline">Show this to your parents.</div>' +
+        '<div class="parent-teaser-sub">We\u2019ve written a plain-English summary of your result \u2014 designed to answer the questions parents actually ask.</div>';
+      var parentBtn = el('button', 'btn btn-primary', 'Generate parent summary \u2192');
+      parentBtn.addEventListener('click', function() { App.openParentModal(); });
+      parentTeaser.appendChild(parentBtn);
+      container.appendChild(parentTeaser);
+
+      // ANIMATE
+      setTimeout(function() {
+        animateCount(qs('#pct-top'), topPct, 1000);
+        requestAnimationFrame(function() {
+          var fill = qs('#top-bar-fill');
+          if (fill) fill.style.width = topPct + '%';
+        });
+      }, 100);
+
+      otherCourses.forEach(function(item, i) {
+        setTimeout(function() {
+          var pctEl = qs('#pct-other-' + i);
+          if (pctEl) animateCount(pctEl, item.pct, 800, '%');
+        }, 300 + i * 180);
+      });
+    }
+
+    function detailRow(label, value) {
+      return '<div class="course-detail-row">' +
+        '<span class="course-detail-label">' + escapeHtml(label) + '</span>' +
+        '<span class="course-detail-val">' + escapeHtml(value) + '</span>' +
+        '</div>';
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ================================================
+    // PARENT MODAL
+    // ================================================
+
+    function buildParentSummary() {
+      var topKey = state.topMatch;
+      var topCourse = courses[topKey];
+      var topPct = state.sortedCourses[0].pct;
+      var box = qs('#modal-parent-box');
+
+      var html =
+        '<div class="parent-ada-logo">ada<span class="dot-dark"></span></div>' +
+        '<div class="parent-institution">National College for Digital Skills</div>' +
+        '<div class="parent-sub-label">Your child\u2019s course match from Ada</div>' +
+        '<hr class="parent-hr">' +
+        '<div class="parent-course-name">' + escapeHtml(topCourse.name) + '</div>' +
+        '<div class="parent-pct">' + topPct + '% match</div>' +
+        '<div class="parent-desc">' + escapeHtml(topCourse.description) + '</div>' +
+        '<div class="parent-list-label">What this means for their future:</div>' +
+        '<ul class="parent-careers-list">' +
+          topCourse.careers.map(function(c) { return '<li>' + escapeHtml(c) + '</li>'; }).join('') +
+        '</ul>';
+
+      if (topCourse.isTLevel) {
+        html +=
+          '<div class="parent-tlevel-block">' +
+          '<div class="parent-tlevel-heading">About T Levels \u2014 what parents ask us most:</div>' +
+          '<div class="parent-qa">' +
+            '<div class="parent-q">Q: Will universities accept a T Level?</div>' +
+            '<div class="parent-a">A: Yes. Most UK universities accept T Levels, and Ada\u2019s T Level earns up to 168 UCAS points \u2014 the same as 3 A-Levels. A full list of accepting universities is available at tlevels.gov.uk.</div>' +
+          '</div>' +
+          '<div class="parent-qa">' +
+            '<div class="parent-q">Q: Is it respected by employers?</div>' +
+            '<div class="parent-a">A: Ada\u2019s T Level partners include Bank of America, PwC, Booking.com and Siemens. Students complete a 45-day placement with a real company as part of the course.</div>' +
+          '</div>' +
+          '<div class="parent-qa">' +
+            '<div class="parent-q">Q: What if they change their mind?</div>' +
+            '<div class="parent-a">A: T Level graduates can go to university, into work, or into a degree apprenticeship. It doesn\u2019t close any doors.</div>' +
+          '</div>' +
+          '</div>';
+      }
+
+      html +=
+        '<div class="parent-next-step">' +
+          '<strong>Next step:</strong> Ada holds open evenings in Manchester and London.<br>' +
+          'Book a place: <a href="https://www.ada.ac.uk/sixth-form/open-days-events/" target="_blank">ada.ac.uk/sixth-form/open-days-events</a>' +
+        '</div>' +
+        '<div class="parent-footer-info">' +
+          '<strong>Ada, the National College for Digital Skills</strong><br>' +
+          'ada.ac.uk &nbsp;|&nbsp; info@ada.ac.uk &nbsp;|&nbsp; 0203 1050 125' +
+        '</div>' +
+        '<div class="parent-modal-actions">' +
+          '<button class="btn btn-copy" onclick="App.copyParentSummary()">Copy to clipboard</button>' +
+          '<button class="btn btn-dark-outline" onclick="App.closeParentModal()">Close</button>' +
+        '</div>';
+
+      box.innerHTML = html;
+    }
+
+    function buildCopyText() {
+      var topKey = state.topMatch;
+      var topCourse = courses[topKey];
+      var topPct = state.sortedCourses[0].pct;
+
+      var lines = [
+        'ada.',
+        '',
+        "Your child's course match from Ada",
+        'National College for Digital Skills',
+        '',
+        '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501',
+        '',
+        topCourse.name + ' \u2014 ' + topPct + '% match',
+        '',
+        topCourse.description,
+        '',
+        'What this means for their future:',
+      ];
+
+      topCourse.careers.forEach(function(c) { lines.push('- ' + c); });
+
+      if (topCourse.isTLevel) {
+        lines.push('', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501');
+        lines.push('About T Levels \u2014 what parents ask us most:');
+        lines.push('');
+        lines.push('Q: Will universities accept a T Level?');
+        lines.push("A: Yes. Most UK universities accept T Levels, and Ada\u2019s T Level earns up to 168 UCAS points \u2014 the same as 3 A-Levels. A full list of accepting universities is available at tlevels.gov.uk.");
+        lines.push('');
+        lines.push('Q: Is it respected by employers?');
+        lines.push("A: Ada\u2019s T Level partners include Bank of America, PwC, Booking.com and Siemens. Students complete a 45-day placement with a real company as part of the course.");
+        lines.push('');
+        lines.push('Q: What if they change their mind?');
+        lines.push("A: T Level graduates can go to university, into work, or into a degree apprenticeship. It doesn\u2019t close any doors.");
+        lines.push('\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501');
+      }
+
+      lines.push('', 'Next step: Ada holds open evenings in Manchester and London.');
+      lines.push('Book a place: ada.ac.uk/sixth-form/open-days-events');
+      lines.push('', 'Ada, the National College for Digital Skills');
+      lines.push('ada.ac.uk | info@ada.ac.uk | 0203 1050 125');
+
+      return lines.join('\n');
+    }
+
+    // ================================================
+    // EMAIL MODAL
+    // ================================================
+
+    function renderEmailForm() {
+      qs('#email-form-inner').innerHTML =
+        '<div class="form-field">' +
+          '<label class="form-label" for="f-name">First name</label>' +
+          '<input type="text" class="form-input" id="f-name" placeholder="Your first name" autocomplete="given-name">' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<label class="form-label" for="f-email">Email address</label>' +
+          '<input type="email" class="form-input" id="f-email" placeholder="your@email.com" autocomplete="email">' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<div class="form-checks-label">I\'m interested in:</div>' +
+          '<div class="form-checks">' +
+            '<label class="form-check"><input type="checkbox" id="chk-sixth" checked> Sixth Form updates</label>' +
+            '<label class="form-check"><input type="checkbox" id="chk-appr"> Apprenticeship updates</label>' +
+          '</div>' +
+        '</div>' +
+        '<button class="btn btn-primary" id="email-submit-btn">Get updates &rarr;</button>';
+
+      qs('#email-submit-btn').addEventListener('click', submitEmail);
+    }
+
+    function submitEmail() {
+      var name = qs('#f-name').value.trim();
+      var email = qs('#f-email').value.trim();
+      var sixth = qs('#chk-sixth').checked;
+      var appr = qs('#chk-appr').checked;
+
+      if (!name) { showToast('Please enter your first name'); return; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Please enter a valid email address'); return;
+      }
+
+      localStorage.setItem('ada_email_signup', JSON.stringify({
+        name: name, email: email,
+        sixthForm: sixth, apprenticeship: appr,
+        timestamp: Date.now()
+      }));
+
+      qs('#email-form-inner').innerHTML =
+        '<div class="form-success">' +
+          '<div class="form-success-check">\u2713</div>' +
+          '<div class="form-success-title">You\'re on the list.</div>' +
+          '<div class="form-success-body">We\'ll be in touch before applications open.</div>' +
+          '<button class="btn btn-primary" onclick="App.closeEmailModal()">Done</button>' +
+        '</div>';
+    }
+
+    // ================================================
+    // PUBLIC API
+    // ================================================
+
+    window.App = {
+      startQuiz: function() {
+        state.currentQ = 0;
+        state.answers = [];
+        state.scores = {};
+        state.topMatch = null;
+        state.sortedCourses = [];
+        state.answering = false;
+        fadeToScreen('screen-quiz');
+        renderQuestion();
+      },
+
+      showLastResult: function() {
+        var saved = localStorage.getItem('ada_quiz_result');
+        if (!saved) return;
+        try {
+          var result = JSON.parse(saved);
+          state.scores = result.scores || {};
+          state.answers = result.answers || [];
+          state.topMatch = result.topMatch;
+          state.sortedCourses = result.sortedCourses || [];
+          if (!state.sortedCourses.length) computeScores();
+          renderResults();
+          fadeToScreen('screen-results');
+        } catch (e) {}
+      },
+
+      retake: function() {
+        localStorage.removeItem('ada_quiz_result');
+        state.currentQ = 0;
+        state.answers = [];
+        state.scores = {};
+        state.topMatch = null;
+        state.sortedCourses = [];
+        fadeToScreen('screen-welcome');
+        initWelcome();
+      },
+
+      openParentModal: function() {
+        buildParentSummary();
+        openModal('modal-parent');
+      },
+
+      closeParentModal: function() {
+        closeModal('modal-parent');
+      },
+
+      handleParentModalBgClick: function(e) {
+        if (e.target === qs('#modal-parent')) App.closeParentModal();
+      },
+
+      copyParentSummary: function() {
+        var text = buildCopyText();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function() {
+            showToast('Copied to clipboard \u2713');
+          }).catch(function() { fallbackCopy(text); });
+        } else {
+          fallbackCopy(text);
+        }
+      },
+
+      openEmailModal: function() {
+        renderEmailForm();
+        openModal('modal-email');
+      },
+
+      closeEmailModal: function() {
+        closeModal('modal-email');
+      },
+
+      handleEmailModalBgClick: function(e) {
+        if (e.target === qs('#modal-email')) App.closeEmailModal();
+      }
+    };
+
+    function fallbackCopy(text) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('Copied to clipboard \u2713');
+      } catch (e) {
+        showToast('Could not copy — please select manually');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // ================================================
+    // BOOT
+    // ================================================
+
+    initWelcome();
+
+  })();
+  </script>
+</body>
+</html>
