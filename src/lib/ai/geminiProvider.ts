@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import type { AiProvider, ParentCardInput } from './aiProvider';
 import { buildParentCardPrompt } from './promptBuilder';
 
-const MODEL = 'gemini-2.5-flash-lite';
+const MODEL = 'gemini-3.5-flash-lite';
 const TIMEOUT_MS = 8000;
 
 /**
