@@ -32,9 +32,14 @@ export default async function StaffQrPage({ params }: { params: Promise<{ token:
 
       <QrCodeCard token={token} />
 
-      <Link href="/q" className="text-ada-green text-sm hover:underline">
-        Preview what scanning it opens →
-      </Link>
+      <div className="flex flex-col gap-2">
+        <Link href="/q" className="text-ada-green text-sm hover:underline">
+          Preview what scanning it opens →
+        </Link>
+        <Link href="/staff/dashboard" className="text-ada-green text-sm hover:underline">
+          View scan/completion stats →
+        </Link>
+      </div>
     </main>
   );
 }
