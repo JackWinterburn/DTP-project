@@ -26,7 +26,10 @@ export async function QrCodeCard({ token }: { token: string }) {
   return (
     <div className="border-ada-border flex flex-col items-center gap-3 rounded-xl border-2 p-6">
       <div className="rounded-lg bg-white p-4">
-        <QRCodeSVG value={url} size={220} level="M" />
+        {/* qrcode.react renders an <svg role="img">; without a title an
+            SVG with an img role has no accessible name (axe: svg-img-alt,
+            "serious" -- found during the Phase 8 accessibility audit). */}
+        <QRCodeSVG value={url} size={220} level="M" title={`QR code linking to ${url}`} />
       </div>
       <p className="text-ada-grey text-center text-sm break-all">{url}</p>
     </div>
