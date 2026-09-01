@@ -1,21 +1,50 @@
 @import 'tailwindcss';
 
+/**
+ * Ada brand theme (UI redesign, 2026-09-01) -- colour tokens lifted
+ * directly from the original hackathon prototype (old-hackathon-
+ * prototype branch, survey.html :root custom properties) so the rebuilt
+ * Next.js UI matches the brand precisely rather than approximating it.
+ *
+ * This is a brand-locked dark UI, not a light-theme-with-a-dark-variant
+ * -- unlike a general app, "ada" always looks like this, so these are
+ * plain values, not conditional on prefers-color-scheme.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ada-black: #0a0a0a;
+  --ada-dark: #111111;
+  --ada-card: #1a1a1a;
+  --ada-border: #2a2a2a;
+  --ada-green: #00e5a0;
+  --ada-green-dark: #00b880;
+  --ada-white: #ffffff;
+  --ada-grey: #888888;
+  --ada-light-grey: #cccccc;
+  --ada-warning: #ff6b35;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-ada-black: var(--ada-black);
+  --color-ada-dark: var(--ada-dark);
+  --color-ada-card: var(--ada-card);
+  --color-ada-border: var(--ada-border);
+  --color-ada-green: var(--ada-green);
+  --color-ada-green-dark: var(--ada-green-dark);
+  --color-ada-white: var(--ada-white);
+  --color-ada-grey: var(--ada-grey);
+  --color-ada-light-grey: var(--ada-light-grey);
+  --color-ada-warning: var(--ada-warning);
+  --color-background: var(--ada-black);
+  --color-foreground: var(--ada-white);
+  /* Plus Jakarta Sans is loaded at runtime via a <link> stylesheet in the
+     root layout (not next/font/google) -- the device sandbox this build
+     sometimes runs in can't reach fonts.googleapis.com at build time, and
+     a runtime <link> avoids that entirely while matching the original
+     prototype's own loading approach. System fallbacks keep the app
+     fully usable if that stylesheet is blocked or slow. */
+  --font-sans:
+    'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -28,6 +57,6 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--ada-black);
+  color: var(--ada-white);
 }

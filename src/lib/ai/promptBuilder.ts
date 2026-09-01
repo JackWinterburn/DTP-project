@@ -16,9 +16,9 @@ export function buildParentCardPrompt(input: ParentCardInput): string {
 
   const factLines: string[] = [];
   if (facts) {
-    if (facts.ucasPointsHeadline) factLines.push(`UCAS points: ${facts.ucasPointsHeadline}`);
-    if (facts.universityAcceptance)
-      factLines.push(`University acceptance: ${facts.universityAcceptance}`);
+    if (facts.qualification) factLines.push(`Qualification: ${facts.qualification}`);
+    if (facts.equivalent) factLines.push(`Equivalent to: ${facts.equivalent}`);
+    if (facts.entryRequirement) factLines.push(`Entry requirement: ${facts.entryRequirement}`);
     if (facts.employerPartners.length > 0) {
       factLines.push(`Employer partners: ${facts.employerPartners.join(', ')}`);
     }

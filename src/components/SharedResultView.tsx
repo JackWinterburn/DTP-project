@@ -48,7 +48,7 @@ export function SharedResultView({ shareToken }: { shareToken: string }) {
 
   if (state === 'loading') {
     return (
-      <p className="p-6 text-center text-neutral-500 dark:text-neutral-400" role="status">
+      <p className="text-ada-grey p-6 text-center" role="status">
         Loading your results…
       </p>
     );
@@ -57,14 +57,14 @@ export function SharedResultView({ shareToken }: { shareToken: string }) {
   if (state === 'not-found') {
     return (
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
-        <h1 className="text-xl font-semibold">We couldn&apos;t find that result</h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
+        <h1 className="text-xl font-extrabold tracking-tight">We couldn&apos;t find that result</h1>
+        <p className="text-ada-light-grey">
           This link may be wrong, or the result may no longer be available.
         </p>
         <button
           type="button"
           onClick={() => router.push('/q')}
-          className="rounded-lg bg-neutral-900 px-6 py-3 font-semibold text-white focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 focus-visible:outline-none dark:bg-neutral-100 dark:text-neutral-900"
+          className="hover:bg-ada-green-dark bg-ada-green text-ada-black focus-visible:ring-ada-green focus-visible:ring-offset-ada-black min-h-[52px] w-full rounded-lg px-6 py-4 font-bold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           Take the quiz
         </button>

@@ -19,8 +19,8 @@ export function buildStaticFallbackCard(input: ParentCardInput): string {
 
   const factSentence = facts
     ? [
-        facts.ucasPointsHeadline ? `It carries UCAS points of ${facts.ucasPointsHeadline}.` : '',
-        facts.universityAcceptance ? facts.universityAcceptance : '',
+        facts.qualification ? `It leads to ${facts.qualification}.` : '',
+        facts.equivalent ? `This is equivalent to ${facts.equivalent}.` : '',
         facts.employerPartners.length > 0
           ? `Ada's industry partners for this course include ${facts.employerPartners.join(', ')}.`
           : '',

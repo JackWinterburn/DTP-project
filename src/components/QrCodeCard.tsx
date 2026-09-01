@@ -24,11 +24,11 @@ export async function QrCodeCard({ token }: { token: string }) {
   const url = `${origin}/q/${encodeURIComponent(token)}`;
 
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl border-2 border-neutral-300 p-6 dark:border-neutral-700">
+    <div className="border-ada-border flex flex-col items-center gap-3 rounded-xl border-2 p-6">
       <div className="rounded-lg bg-white p-4">
         <QRCodeSVG value={url} size={220} level="M" />
       </div>
-      <p className="text-center text-sm break-all text-neutral-600 dark:text-neutral-400">{url}</p>
+      <p className="text-ada-grey text-center text-sm break-all">{url}</p>
     </div>
   );
 }

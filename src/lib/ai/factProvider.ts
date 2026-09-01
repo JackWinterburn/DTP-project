@@ -1,12 +1,11 @@
-import { COURSES, TLEVEL_FACTS } from '@/config';
-
-const PLACEHOLDER_PREFIX = '[PLACEHOLDER';
+import { COURSES } from '@/config';
 
 export interface VerifiedCourseFacts {
   courseName: string;
   isTlevel: boolean;
-  ucasPointsHeadline: string | null;
-  universityAcceptance: string | null;
+  qualification: string | null;
+  equivalent: string | null;
+  entryRequirement: string | null;
   employerPartners: string[];
 }
 
@@ -18,28 +17,26 @@ export interface VerifiedCourseFacts {
  * later (a real Ada content API, say) without touching the prompt
  * builder or the route.
  *
- * Placeholder facts from Phase 2 (`[PLACEHOLDER ...]`) are filtered out
- * here, not passed through -- the AI must never see bracket-placeholder
- * text as if it were a real fact to rephrase (Risk R1: fact-locking only
- * works if what's locked in is real). A T-Level with only placeholder
- * facts still returns isTlevel: true with the fields as null/[], so
- * generateParentCard can fall back to a generic sentence instead.
+ * As of the 2026-09-01 UI redesign, src/config/courses.ts carries real,
+ * sourced facts rather than Phase 2's [PLACEHOLDER] markers -- but this
+ * function still guards against a leaked placeholder marker reaching the
+ * AI, since that's cheap insurance against a future content edit
+ * reintroducing one (Risk R1: fact-locking only works if what's locked
+ * in is real).
  */
 export function getCourseFacts(courseId: string): VerifiedCourseFacts | null {
   const course = COURSES.find((c) => c.id === courseId);
   if (!course) return null;
 
-  const facts = TLEVEL_FACTS.find((f) => f.courseId === courseId);
   const verified = (value: string | undefined) =>
-    value && !value.startsWith(PLACEHOLDER_PREFIX) ? value : null;
+    value && !value.startsWith('[PLACEHOLDER') ? value : null;
 
   return {
     courseName: course.name,
     isTlevel: course.isTlevel,
-    ucasPointsHeadline: verified(facts?.ucasPointsHeadline),
-    universityAcceptance: verified(facts?.universityAcceptance),
-    employerPartners: (facts?.employerPartners ?? []).filter(
-      (p) => !p.startsWith(PLACEHOLDER_PREFIX),
-    ),
+    qualification: verified(course.qualification),
+    equivalent: verified(course.equivalent),
+    entryRequirement: verified(course.entryRequirement),
+    employerPartners: (course.employerPartners ?? []).filter((p) => !p.startsWith('[PLACEHOLDER')),
   };
 }

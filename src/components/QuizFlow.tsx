@@ -159,17 +159,24 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 p-6">
+    <div
+      className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-6 ${
+        stage === 'results' ? '' : 'justify-center'
+      }`}
+    >
       {/* Announces progress/completion changes to screen-reader users without moving visible focus (NFR2). */}
       <div ref={liveRegionRef} aria-live="polite" className="sr-only" />
 
       {stage === 'landing' && (
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg border-2 border-neutral-400 text-xs font-bold text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
-            ADA
+        <div className="flex flex-col items-center gap-5 text-center">
+          <div className="mb-6 inline-flex items-center text-[22px] leading-none font-extrabold tracking-tight">
+            ada
+            <span className="bg-ada-green ml-[3px] inline-block h-1.5 w-1.5 rounded-full" />
           </div>
-          <h1 className="text-3xl font-bold">Find Your Path</h1>
-          <p className="max-w-xs text-neutral-600 dark:text-neutral-400">
+          <h1 className="text-[44px] leading-[1.05] font-extrabold tracking-tight">
+            Find <span className="text-ada-green">Your Path</span>.
+          </h1>
+          <p className="text-ada-light-grey max-w-xs text-lg leading-relaxed">
             Answer a few quick questions and get a personalised course match — no account needed.
           </p>
           <button
@@ -179,11 +186,11 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
               setStage('question');
               announce(`Question 1 of ${QUESTIONS.length}`);
             }}
-            className="w-full rounded-lg bg-neutral-900 px-6 py-3 font-semibold text-white focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 focus-visible:outline-none dark:bg-neutral-100 dark:text-neutral-900"
+            className="bg-ada-green text-ada-black hover:bg-ada-green-dark focus-visible:ring-ada-green focus-visible:ring-offset-ada-black mt-2 min-h-[52px] w-full rounded-lg px-6 py-4 font-bold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             Start the quiz
           </button>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Takes about 3 minutes</p>
+          <p className="text-ada-grey text-sm">Takes about 3 minutes</p>
         </div>
       )}
 

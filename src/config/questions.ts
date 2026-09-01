@@ -1,299 +1,289 @@
 import type { Question } from '@/types/quiz';
 
 /**
- * Versioned question bank + course weighting config (ticket #7, FR3 input).
+ * Versioned question bank + course weighting config (ticket #7, FR3
+ * input). Rewritten 2026-09-01 alongside courses.ts for the UI redesign
+ * -- same 5 courses' worth of differentiation as before, in the tone of
+ * the original hackathon prototype's question bank (old-hackathon-
+ * prototype branch, survey.html) but written fresh against this
+ * project's actual course set (tlevel-digital / apprenticeship /
+ * btec-computing / creative-media / business-enterprise), not a literal
+ * port of the prototype's different pathway names.
  *
- * Single reviewed source of truth for the scoring rubric (Risk R8
- * mitigation) -- the ScoringEngine (Phase 3) reads this and produces
- * nothing else. Bump QUIZ_VERSION whenever the questions or weights
- * change; `results.quiz_version` records which version produced a given
- * result, so historic results stay explainable after a quiz update
- * (Risk R6 mitigation in the risk register).
+ * QUIZ_VERSION bumped 1 -> 2: the rubric materially changed (course set
+ * and every question), so historic results (recorded against v1) stay
+ * correctly attributed to the old rubric rather than silently
+ * reinterpreted (Risk R6 mitigation, see the original doc comment this
+ * replaces).
  *
  * Course IDs used in weights must match src/config/courses.ts. Weights
  * are positive integers; omitting a course from an option's weights means
  * that option contributes nothing toward that course.
  */
-export const QUIZ_VERSION = 1;
+export const QUIZ_VERSION = 2;
 
 export const QUESTIONS: Question[] = [
   {
     id: 'q1',
-    text: 'Which of these sounds most like a good day at work to you?',
+    text: "When you're given a problem to solve, what's your instinct?",
     weightCategory: 'work-style',
     options: [
       {
         id: 'q1-a',
-        label: 'Building or fixing something hands-on',
+        label: 'Break it down with logic and data',
         weights: [
-          { courseId: 'tlevel-digital', weight: 3 },
-          { courseId: 'tlevel-support', weight: 2 },
-          { courseId: 'btec-computing', weight: 1 },
-        ],
-      },
-      {
-        id: 'q1-b',
-        label: 'Designing how something looks and feels',
-        weights: [
-          { courseId: 'creative-media', weight: 3 },
+          { courseId: 'btec-computing', weight: 3 },
           { courseId: 'tlevel-digital', weight: 1 },
         ],
       },
       {
+        id: 'q1-b',
+        label: "Think about who's affected and why",
+        weights: [{ courseId: 'business-enterprise', weight: 3 }],
+      },
+      {
         id: 'q1-c',
-        label: 'Solving a logic or data puzzle',
-        weights: [
-          { courseId: 'btec-computing', weight: 3 },
-          { courseId: 'tlevel-digital', weight: 2 },
-        ],
+        label: 'Sketch out what it could look like',
+        weights: [{ courseId: 'creative-media', weight: 3 }],
       },
       {
         id: 'q1-d',
-        label: 'Helping a team stay organised',
+        label: 'Just start building and figure it out',
         weights: [
-          { courseId: 'business-enterprise', weight: 3 },
-          { courseId: 'tlevel-support', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 3 },
+          { courseId: 'apprenticeship', weight: 1 },
         ],
       },
     ],
   },
   {
     id: 'q2',
-    text: "When something breaks, like a laptop or an app, what's your instinct?",
-    weightCategory: 'problem-solving',
+    text: 'Which of these sounds most like you?',
+    weightCategory: 'self-image',
     options: [
       {
         id: 'q2-a',
-        label: 'Try to fix it myself, step by step',
-        weights: [
-          { courseId: 'tlevel-digital', weight: 3 },
-          { courseId: 'tlevel-support', weight: 2 },
-        ],
+        label: 'I love working things out logically',
+        weights: [{ courseId: 'btec-computing', weight: 3 }],
       },
       {
         id: 'q2-b',
-        label: 'Look up how other people have solved it',
-        weights: [
-          { courseId: 'btec-computing', weight: 2 },
-          { courseId: 'tlevel-support', weight: 2 },
-        ],
+        label: "I'm into how businesses and people work",
+        weights: [{ courseId: 'business-enterprise', weight: 3 }],
       },
       {
         id: 'q2-c',
-        label: "Ask someone who's good at that kind of thing",
-        weights: [
-          { courseId: 'tlevel-support', weight: 3 },
-          { courseId: 'business-enterprise', weight: 1 },
-        ],
+        label: "I'm a visual person — design gets me",
+        weights: [{ courseId: 'creative-media', weight: 3 }],
       },
       {
         id: 'q2-d',
-        label: 'Get frustrated and move on to something else',
+        label: 'I want to write code and ship real things',
         weights: [
-          { courseId: 'creative-media', weight: 1 },
-          { courseId: 'business-enterprise', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 3 },
+          { courseId: 'apprenticeship', weight: 1 },
         ],
       },
     ],
   },
   {
     id: 'q3',
-    text: 'Which subject do you find yourself looking forward to most?',
-    weightCategory: 'subject-interest',
+    text: 'What kind of career excites you most?',
+    weightCategory: 'career-interest',
     options: [
       {
         id: 'q3-a',
-        label: 'Computer Science / Programming',
+        label: 'Software developer, data analyst or engineer',
         weights: [
-          { courseId: 'tlevel-digital', weight: 3 },
           { courseId: 'btec-computing', weight: 2 },
+          { courseId: 'tlevel-digital', weight: 2 },
         ],
       },
       {
         id: 'q3-b',
-        label: 'Art, Media or Design',
-        weights: [{ courseId: 'creative-media', weight: 3 }],
-      },
-      {
-        id: 'q3-c',
-        label: 'Business Studies',
+        label: 'Marketing, business analyst or entrepreneur',
         weights: [{ courseId: 'business-enterprise', weight: 3 }],
       },
       {
+        id: 'q3-c',
+        label: 'Video editor, designer or content creator',
+        weights: [{ courseId: 'creative-media', weight: 3 }],
+      },
+      {
         id: 'q3-d',
-        label: 'IT / Digital Skills (general)',
+        label: 'Web engineer, cybersecurity or database roles',
         weights: [
-          { courseId: 'tlevel-support', weight: 3 },
-          { courseId: 'btec-computing', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 3 },
+          { courseId: 'apprenticeship', weight: 2 },
         ],
       },
     ],
   },
   {
     id: 'q4',
-    text: 'How do you feel about working on the same project for weeks, improving it bit by bit?',
-    weightCategory: 'persistence',
+    text: 'How do you feel about a 45-day work placement as part of your course?',
+    weightCategory: 'placement',
     options: [
       {
         id: 'q4-a',
-        label: 'I like that -- I enjoy perfecting something',
+        label: 'Yes — real-world experience is everything',
         weights: [
-          { courseId: 'tlevel-digital', weight: 2 },
-          { courseId: 'creative-media', weight: 2 },
+          { courseId: 'tlevel-digital', weight: 3 },
+          { courseId: 'apprenticeship', weight: 3 },
         ],
       },
       {
         id: 'q4-b',
-        label: 'I prefer shorter tasks with a clear, quick finish',
+        label: 'Sounds good, but I want classroom learning too',
         weights: [
-          { courseId: 'tlevel-support', weight: 2 },
           { courseId: 'business-enterprise', weight: 1 },
+          { courseId: 'creative-media', weight: 1 },
         ],
       },
       {
         id: 'q4-c',
-        label: 'Depends on the project',
-        weights: [{ courseId: 'btec-computing', weight: 1 }],
+        label: "I'd rather focus on coursework and a portfolio",
+        weights: [
+          { courseId: 'creative-media', weight: 2 },
+          { courseId: 'btec-computing', weight: 1 },
+        ],
       },
       {
         id: 'q4-d',
-        label: "I'd rather work on lots of different things",
+        label: "I'm not fussed either way",
         weights: [
-          { courseId: 'business-enterprise', weight: 2 },
-          { courseId: 'creative-media', weight: 1 },
+          { courseId: 'btec-computing', weight: 1 },
+          { courseId: 'business-enterprise', weight: 1 },
         ],
       },
     ],
   },
   {
     id: 'q5',
-    text: 'Picture your ideal work placement. What does it involve?',
-    weightCategory: 'placement-preference',
+    text: 'Would you rather earn money while you study, or focus full-time on learning?',
+    weightCategory: 'earning',
     options: [
       {
         id: 'q5-a',
-        label: 'Writing and testing code for a real product',
-        weights: [{ courseId: 'tlevel-digital', weight: 3 }],
+        label: 'Earn while I learn — 100%',
+        weights: [{ courseId: 'apprenticeship', weight: 4 }],
       },
       {
         id: 'q5-b',
-        label: 'Helping people solve tech problems day-to-day',
-        weights: [{ courseId: 'tlevel-support', weight: 3 }],
+        label: 'Full-time study, then a job',
+        weights: [
+          { courseId: 'tlevel-digital', weight: 1 },
+          { courseId: 'btec-computing', weight: 1 },
+          { courseId: 'creative-media', weight: 1 },
+          { courseId: 'business-enterprise', weight: 1 },
+        ],
       },
       {
         id: 'q5-c',
-        label: 'Creating videos, graphics or content',
-        weights: [{ courseId: 'creative-media', weight: 3 }],
-      },
-      {
-        id: 'q5-d',
-        label: 'Working with a team on a business project',
+        label: 'Either works for me',
         weights: [
-          { courseId: 'business-enterprise', weight: 3 },
-          { courseId: 'btec-computing', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 1 },
+          { courseId: 'apprenticeship', weight: 1 },
         ],
       },
     ],
   },
   {
     id: 'q6',
-    text: 'How do you prefer to learn something new?',
-    weightCategory: 'learning-style',
+    text: 'Which project sounds most exciting to you?',
+    weightCategory: 'project-type',
     options: [
       {
         id: 'q6-a',
-        label: 'Trial and error -- I like figuring it out myself',
+        label: 'Building and launching a working web application',
         weights: [
-          { courseId: 'tlevel-digital', weight: 2 },
-          { courseId: 'tlevel-support', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 3 },
+          { courseId: 'apprenticeship', weight: 2 },
         ],
       },
       {
         id: 'q6-b',
-        label: 'Following clear steps and checking my work as I go',
-        weights: [
-          { courseId: 'btec-computing', weight: 2 },
-          { courseId: 'creative-media', weight: 1 },
-        ],
+        label: 'Designing something that helps a business solve a real problem',
+        weights: [{ courseId: 'business-enterprise', weight: 3 }],
       },
       {
         id: 'q6-c',
-        label: 'Watching someone else do it first',
-        weights: [
-          { courseId: 'tlevel-support', weight: 2 },
-          { courseId: 'creative-media', weight: 1 },
-        ],
+        label: 'Creating a video, animation or design campaign',
+        weights: [{ courseId: 'creative-media', weight: 3 }],
       },
       {
         id: 'q6-d',
-        label: 'Working it out with a group',
-        weights: [
-          { courseId: 'business-enterprise', weight: 2 },
-          { courseId: 'btec-computing', weight: 1 },
-        ],
+        label: "Analysing data to find a pattern no one's noticed",
+        weights: [{ courseId: 'btec-computing', weight: 3 }],
       },
     ],
   },
   {
     id: 'q7',
-    text: 'Which of these would you enjoy explaining to someone else?',
-    weightCategory: 'communication-strength',
+    text: 'How important is going to university straight after sixth form?',
+    weightCategory: 'university',
     options: [
       {
         id: 'q7-a',
-        label: 'How an app or website actually works underneath',
+        label: 'Very — I want a clear route to a good university',
         weights: [
-          { courseId: 'tlevel-digital', weight: 3 },
-          { courseId: 'btec-computing', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 2 },
+          { courseId: 'btec-computing', weight: 2 },
         ],
       },
       {
         id: 'q7-b',
-        label: 'How to set up or fix a device',
-        weights: [{ courseId: 'tlevel-support', weight: 3 }],
+        label: "I'm open to it but not set on it",
+        weights: [
+          { courseId: 'creative-media', weight: 2 },
+          { courseId: 'business-enterprise', weight: 1 },
+        ],
       },
       {
         id: 'q7-c',
-        label: 'How you made something look good',
-        weights: [{ courseId: 'creative-media', weight: 3 }],
+        label: "I'd rather go straight into a career or apprenticeship",
+        weights: [
+          { courseId: 'apprenticeship', weight: 3 },
+          { courseId: 'tlevel-digital', weight: 1 },
+        ],
       },
       {
         id: 'q7-d',
-        label: "How you'd pitch an idea to a group",
-        weights: [{ courseId: 'business-enterprise', weight: 3 }],
+        label: "I haven't decided yet",
+        weights: [
+          { courseId: 'business-enterprise', weight: 1 },
+          { courseId: 'creative-media', weight: 1 },
+        ],
       },
     ],
   },
   {
     id: 'q8',
-    text: "What's most important to you in a future job?",
-    weightCategory: 'career-values',
+    text: 'Pick the phrase that sounds most like you:',
+    weightCategory: 'identity',
     options: [
       {
         id: 'q8-a',
-        label: 'Building things that lots of people actually use',
+        label: 'I want to build things people actually use',
         weights: [
-          { courseId: 'tlevel-digital', weight: 2 },
-          { courseId: 'creative-media', weight: 1 },
+          { courseId: 'tlevel-digital', weight: 3 },
+          { courseId: 'apprenticeship', weight: 1 },
         ],
       },
       {
         id: 'q8-b',
-        label: 'Helping people directly, one at a time',
-        weights: [{ courseId: 'tlevel-support', weight: 3 }],
+        label: 'I want to understand people and solve problems for them',
+        weights: [{ courseId: 'business-enterprise', weight: 3 }],
       },
       {
         id: 'q8-c',
-        label: 'Being creative every day',
+        label: 'I want to make things look and feel amazing',
         weights: [{ courseId: 'creative-media', weight: 3 }],
       },
       {
         id: 'q8-d',
-        label: 'Leading projects and working with clients',
-        weights: [
-          { courseId: 'business-enterprise', weight: 3 },
-          { courseId: 'btec-computing', weight: 1 },
-        ],
+        label: 'I want to understand how systems work at a deep level',
+        weights: [{ courseId: 'btec-computing', weight: 3 }],
       },
     ],
   },

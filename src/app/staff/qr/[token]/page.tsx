@@ -21,7 +21,7 @@ export default async function StaffQrPage({ params }: { params: Promise<{ token:
     <main id="main-content" className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-6">
       <div>
         <h1 className="text-2xl font-bold">Poster QR code</h1>
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-ada-grey mt-1 text-sm">
           Print this for the poster. It always points at the same address, so replacing a damaged
           poster with a fresh printout needs no changes anywhere else (Risk R5).
         </p>
@@ -29,7 +29,7 @@ export default async function StaffQrPage({ params }: { params: Promise<{ token:
 
       <QrCodeCard token={token} />
 
-      <Link href="/q" className="text-sm text-indigo-700 hover:underline dark:text-indigo-400">
+      <Link href="/q" className="text-ada-green text-sm hover:underline">
         Preview what scanning it opens →
       </Link>
     </main>
