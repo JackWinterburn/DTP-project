@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main
       id="main-content"
-      className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-5 p-8 text-center"
+      className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-5 p-8 text-center sm:max-w-lg md:max-w-2xl lg:max-w-3xl"
     >
       <div className="inline-flex items-center text-[22px] leading-none font-extrabold tracking-tight">
         ada

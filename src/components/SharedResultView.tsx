@@ -56,7 +56,7 @@ export function SharedResultView({ shareToken }: { shareToken: string }) {
 
   if (state === 'not-found') {
     return (
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-4 p-6 text-center sm:max-w-lg md:max-w-2xl lg:max-w-3xl">
         <h1 className="text-xl font-extrabold tracking-tight">We couldn&apos;t find that result</h1>
         <p className="text-ada-light-grey">
           This link may be wrong, or the result may no longer be available.
@@ -73,7 +73,7 @@ export function SharedResultView({ shareToken }: { shareToken: string }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md p-6">
+    <div className="mx-auto w-full max-w-md p-6 sm:max-w-lg sm:p-8 md:max-w-2xl lg:max-w-3xl">
       {result && (
         <ResultsScreen
           result={result}

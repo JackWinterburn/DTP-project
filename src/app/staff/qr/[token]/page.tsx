@@ -18,7 +18,10 @@ export default async function StaffQrPage({ params }: { params: Promise<{ token:
   const { token } = await params;
 
   return (
-    <main id="main-content" className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-6">
+    <main
+      id="main-content"
+      className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-6 sm:max-w-lg md:max-w-2xl lg:max-w-3xl"
+    >
       <div>
         <h1 className="text-2xl font-bold">Poster QR code</h1>
         <p className="text-ada-grey mt-1 text-sm">

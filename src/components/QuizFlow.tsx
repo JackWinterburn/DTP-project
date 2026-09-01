@@ -160,7 +160,7 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
 
   return (
     <div
-      className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-6 ${
+      className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-6 p-6 sm:max-w-lg sm:p-8 md:max-w-2xl lg:max-w-3xl ${
         stage === 'results' ? '' : 'justify-center'
       }`}
     >
