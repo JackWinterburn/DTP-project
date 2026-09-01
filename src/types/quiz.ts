@@ -55,3 +55,6 @@ export interface Result {
   quizVersion: number;
   matches: CourseMatch[];
 }
+
+/** One selected AnswerOption id per Question id, keyed by Question.id. Must cover every Question in QUESTIONS before scoring -- ScoringEngine.score() throws otherwise. */
+export type QuizAnswers = Record<string, string>;
