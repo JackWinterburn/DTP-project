@@ -58,3 +58,6 @@ export interface Result {
 
 /** One selected AnswerOption id per Question id, keyed by Question.id. Must cover every Question in QUESTIONS before scoring -- ScoringEngine.score() throws otherwise. */
 export type QuizAnswers = Record<string, string>;
+
+/** Background-save status for a just-scored Result (Phase 5 persistence). 'pending' while the save is in flight, 'saved' once the server-issued shareToken is in hand, 'unsaved' if there's no session or the save failed. */
+export type PersistState = 'pending' | 'saved' | 'unsaved';

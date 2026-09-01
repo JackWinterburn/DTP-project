@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { COURSES } from '@/config';
 import type { CourseMatch, Result } from '@/types/quiz';
+import type { PersistState } from '@/types/quiz';
 import { TLevelPanel } from './TLevelPanel';
 
 const HEADLINE_COUNT = 3;
@@ -20,7 +21,15 @@ function courseName(courseId: string): string {
  * they're shown as independent bars rather than a pie/stacked chart that
  * would visually imply they sum to something.
  */
-export function ResultsScreen({ result, onRestart }: { result: Result; onRestart: () => void }) {
+export function ResultsScreen({
+  result,
+  persistState,
+  onRestart,
+}: {
+  result: Result;
+  persistState: PersistState;
+  onRestart: () => void;
+}) {
   const [showAll, setShowAll] = useState(false);
   const headline = result.matches.slice(0, HEADLINE_COUNT);
   const rest = result.matches.slice(HEADLINE_COUNT);
@@ -59,6 +68,8 @@ export function ResultsScreen({ result, onRestart }: { result: Result; onRestart
 
       {topCourse?.isTlevel && <TLevelPanel courseId={topCourse.id} />}
 
+      <SaveLinkSection persistState={persistState} shareToken={result.shareToken} />
+
       <button
         type="button"
         onClick={onRestart}
@@ -66,6 +77,79 @@ export function ResultsScreen({ result, onRestart }: { result: Result; onRestart
       >
         Retake the quiz
       </button>
+    </div>
+  );
+}
+
+/**
+ * Surfaces FR8/Risk R3's mitigation in the UI: the share-token URL, not
+ * localStorage, is the primary persistence mechanism ("save this link /
+ * send it to yourself"). Honest about whether that link actually works
+ * right now -- `persistState` reflects a real background save, not an
+ * assumption, so this never promises a link that quietly doesn't work
+ * (e.g. the save API was unreachable).
+ */
+function SaveLinkSection({
+  persistState,
+  shareToken,
+}: {
+  persistState: PersistState;
+  shareToken: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/r/${shareToken}` : '';
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API can be unavailable (permissions, older browsers) --
+      // the URL is still shown as selectable text, so this fails quietly.
+    }
+  }
+
+  if (persistState === 'pending') {
+    return (
+      <p className="mt-6 text-sm text-neutral-500 dark:text-neutral-400" role="status">
+        Saving your results…
+      </p>
+    );
+  }
+
+  if (persistState === 'unsaved') {
+    return (
+      <p className="mt-6 text-sm text-neutral-500 dark:text-neutral-400" role="status">
+        Your results couldn&apos;t be saved this time, so this link won&apos;t work later — take a
+        screenshot if you want to keep them.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-6 rounded-xl border-2 border-neutral-300 p-4 dark:border-neutral-700">
+      <p className="text-sm font-medium">Save this link, or send it to yourself</p>
+      <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+        No account needed — this link is the only way to come back to your results.
+      </p>
+      <div className="mt-2 flex items-center gap-2">
+        <input
+          type="text"
+          readOnly
+          value={shareUrl}
+          aria-label="Your results link"
+          onFocus={(e) => e.currentTarget.select()}
+          className="min-w-0 flex-1 rounded-md border border-neutral-300 bg-neutral-50 px-2 py-1 text-xs dark:border-neutral-700 dark:bg-neutral-900"
+        />
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="shrink-0 rounded-md bg-neutral-900 px-3 py-1 text-xs font-semibold text-white focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 focus-visible:outline-none dark:bg-neutral-100 dark:text-neutral-900"
+        >
+          {copied ? 'Copied!' : 'Copy'}
+        </button>
+      </div>
     </div>
   );
 }

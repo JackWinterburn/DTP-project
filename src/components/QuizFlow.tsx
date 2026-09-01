@@ -1,44 +1,94 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { QUESTIONS } from '@/config';
 import { ScoringEngine } from '@/lib/scoring/scoringEngine';
-import type { QuizAnswers, Result } from '@/types/quiz';
+import type { PersistState, QuizAnswers, Result } from '@/types/quiz';
 import { ProgressBar } from './ProgressBar';
 import { QuestionScreen } from './QuestionScreen';
 import { ResultsScreen } from './ResultsScreen';
 
 type Stage = 'landing' | 'question' | 'results';
 
+function detectDeviceClass(): 'mobile' | 'desktop' {
+  if (typeof window === 'undefined' || !window.matchMedia) return 'desktop';
+  // Touch-primary input, not viewport width -- this drives quiz_sessions.
+  // device_class (engagement analytics per the architecture), which cares
+  // about how the student is holding the device, not the layout.
+  return window.matchMedia('(pointer: coarse)').matches ? 'mobile' : 'desktop';
+}
+
 /**
  * Orchestrates the whole student journey: landing -> one-question-per-
- * screen quiz -> results (tickets #13/#14). Scoring runs client-side via
- * ScoringEngine, per the architecture ("no database call needed to
- * compute matches").
+ * screen quiz -> results (tickets #13/#14), now wired to Phase 5's
+ * persistence routes (#17/#18).
  *
- * `qrToken` is threaded through from the route (see src/app/q/) but not
- * used yet -- capturing it into a persisted session is Phase 5's
- * POST /api/sessions (ticket #17). For now the whole journey is
- * client-only: nothing is saved, and the result's shareToken isn't a
- * working URL yet. That's the natural next phase, not a bug in this one.
+ * Scoring itself stays instant and client-only (ScoringEngine, per the
+ * architecture: "no database call needed to compute matches") --
+ * persistence happens in the background and never blocks the results
+ * reveal. If session creation or the results POST fails or is slow (API
+ * down, offline, etc.), the student still sees their client-computed
+ * results immediately; they just aren't saved/shareable across devices,
+ * which ResultsScreen surfaces honestly via `persistState` rather than
+ * silently pretending the link works.
  */
 export function QuizFlow({ qrToken }: { qrToken: string | null }) {
   const [stage, setStage] = useState<Stage>('landing');
   const [questionIndex, setQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [result, setResult] = useState<Result | null>(null);
+  const [persistState, setPersistState] = useState<PersistState>('pending');
   const liveRegionRef = useRef<HTMLDivElement>(null);
   const engine = useMemo(() => new ScoringEngine(), []);
-
-  // qrToken isn't persisted anywhere yet -- capturing it into a real
-  // session is Phase 5's POST /api/sessions (ticket #17). Logged here so
-  // QR routing can be sanity-checked before that route exists.
-  useEffect(() => {
-    if (qrToken) console.debug(`[QuizFlow] reached via QR token: ${qrToken}`);
-  }, [qrToken]);
+  const sessionIdRef = useRef<string | null>(null);
+  const sessionRequestedRef = useRef(false);
 
   function announce(message: string) {
     if (liveRegionRef.current) liveRegionRef.current.textContent = message;
+  }
+
+  // Fires once, when the student actually starts (not on page load, so an
+  // organic visitor who never starts doesn't create an orphan session).
+  async function ensureSession() {
+    if (sessionRequestedRef.current) return;
+    sessionRequestedRef.current = true;
+    try {
+      const res = await fetch('/api/sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qrToken: qrToken ?? undefined, deviceClass: detectDeviceClass() }),
+      });
+      if (!res.ok) throw new Error(`POST /api/sessions -> ${res.status}`);
+      const data: { sessionId: string } = await res.json();
+      sessionIdRef.current = data.sessionId;
+    } catch (err) {
+      console.error('[QuizFlow] could not create session -- results will be local-only', err);
+    }
+  }
+
+  // Runs after scoring, in the background -- never blocks showing results.
+  async function persistResult(scored: Result) {
+    if (!sessionIdRef.current) {
+      setPersistState('unsaved');
+      return;
+    }
+    try {
+      const res = await fetch('/api/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: sessionIdRef.current, matches: scored.matches }),
+      });
+      if (!res.ok) throw new Error(`POST /api/results -> ${res.status}`);
+      const data: { shareToken: string } = await res.json();
+      // Swap in the server-issued token -- the real, persisted one (see
+      // the API route's own comment on why this differs from the token
+      // ScoringEngine generated).
+      setResult((prev) => (prev ? { ...prev, shareToken: data.shareToken } : prev));
+      setPersistState('saved');
+    } catch (err) {
+      console.error('[QuizFlow] could not save result -- showing local-only results', err);
+      setPersistState('unsaved');
+    }
   }
 
   function goToFirstUnanswered(): number {
@@ -63,7 +113,9 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
     const scored = engine.score(nextAnswers);
     setResult(scored);
     setStage('results');
+    setPersistState('pending');
     announce('Your results are ready.');
+    void persistResult(scored);
   }
 
   function handleSelect(optionId: string) {
@@ -98,6 +150,9 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
     setResult(null);
     setQuestionIndex(0);
     setStage('landing');
+    setPersistState('pending');
+    sessionIdRef.current = null;
+    sessionRequestedRef.current = false;
   }
 
   return (
@@ -117,6 +172,7 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
           <button
             type="button"
             onClick={() => {
+              void ensureSession();
               setStage('question');
               announce(`Question 1 of ${QUESTIONS.length}`);
             }}
@@ -142,7 +198,9 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
         </div>
       )}
 
-      {stage === 'results' && result && <ResultsScreen result={result} onRestart={handleRestart} />}
+      {stage === 'results' && result && (
+        <ResultsScreen result={result} persistState={persistState} onRestart={handleRestart} />
+      )}
     </div>
   );
 }
