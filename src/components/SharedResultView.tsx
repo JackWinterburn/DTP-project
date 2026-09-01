@@ -75,7 +75,12 @@ export function SharedResultView({ shareToken }: { shareToken: string }) {
   return (
     <div className="mx-auto w-full max-w-md p-6">
       {result && (
-        <ResultsScreen result={result} persistState="saved" onRestart={() => router.push('/q')} />
+        <ResultsScreen
+          result={result}
+          persistState="saved"
+          sessionId={null}
+          onRestart={() => router.push('/q')}
+        />
       )}
     </div>
   );

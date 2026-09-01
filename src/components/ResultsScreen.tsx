@@ -5,6 +5,8 @@ import { COURSES } from '@/config';
 import type { CourseMatch, Result } from '@/types/quiz';
 import type { PersistState } from '@/types/quiz';
 import { TLevelPanel } from './TLevelPanel';
+import { ParentCardSection } from './ParentCardSection';
+import { EmailOptinForm } from './EmailOptinForm';
 
 const HEADLINE_COUNT = 3;
 
@@ -24,10 +26,12 @@ function courseName(courseId: string): string {
 export function ResultsScreen({
   result,
   persistState,
+  sessionId,
   onRestart,
 }: {
   result: Result;
   persistState: PersistState;
+  sessionId: string | null;
   onRestart: () => void;
 }) {
   const [showAll, setShowAll] = useState(false);
@@ -69,6 +73,10 @@ export function ResultsScreen({
       {topCourse?.isTlevel && <TLevelPanel courseId={topCourse.id} />}
 
       <SaveLinkSection persistState={persistState} shareToken={result.shareToken} />
+
+      <ParentCardSection shareToken={result.shareToken} persistState={persistState} />
+
+      <EmailOptinForm sessionId={sessionId} />
 
       <button
         type="button"

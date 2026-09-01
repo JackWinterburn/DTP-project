@@ -38,6 +38,7 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
   const [answers, setAnswers] = useState<QuizAnswers>({});
   const [result, setResult] = useState<Result | null>(null);
   const [persistState, setPersistState] = useState<PersistState>('pending');
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const liveRegionRef = useRef<HTMLDivElement>(null);
   const engine = useMemo(() => new ScoringEngine(), []);
   const sessionIdRef = useRef<string | null>(null);
@@ -61,6 +62,7 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
       if (!res.ok) throw new Error(`POST /api/sessions -> ${res.status}`);
       const data: { sessionId: string } = await res.json();
       sessionIdRef.current = data.sessionId;
+      setSessionId(data.sessionId);
     } catch (err) {
       console.error('[QuizFlow] could not create session -- results will be local-only', err);
     }
@@ -153,6 +155,7 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
     setPersistState('pending');
     sessionIdRef.current = null;
     sessionRequestedRef.current = false;
+    setSessionId(null);
   }
 
   return (
@@ -199,7 +202,12 @@ export function QuizFlow({ qrToken }: { qrToken: string | null }) {
       )}
 
       {stage === 'results' && result && (
-        <ResultsScreen result={result} persistState={persistState} onRestart={handleRestart} />
+        <ResultsScreen
+          result={result}
+          persistState={persistState}
+          sessionId={sessionId}
+          onRestart={handleRestart}
+        />
       )}
     </div>
   );
